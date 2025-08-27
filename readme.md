@@ -1,6 +1,6 @@
-# 🤖 Traductor IA en Chrome
+# 🤖 Traductor IA en Chrome 100% En Local
 
-Este es un simple proyecto web que demuestra el uso de la **API de Traductor de Chrome** para realizar traducciones de texto directamente en el dispositivo. La interfaz está diseñada con **PicoCSS**, lo que le da un aspecto limpio y minimalista.
+Este es un simple proyecto web que demuestra el uso de la **API de Traductor de Chrome** para realizar traducciones de texto directamente en el dispositivo sin necesidad de internet una vez descargado automaticamente el modelo correspondiente al pais, sin llamadas a servidor, todo queda en tu dispositivo. La interfaz está diseñada con **PicoCSS**, lo que le da un aspecto limpio y minimalista.
 
 ## ✨ Características Principales
 
