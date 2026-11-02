@@ -1,45 +1,73 @@
-# 🤖 Traductor IA en Chrome 100% En Local
+# 🤖 Chrome Local AI
 
-Este es un simple proyecto web que demuestra el uso de la **API de Traductor de Chrome** para realizar traducciones de texto directamente en el dispositivo sin necesidad de internet una vez descargado automaticamente el modelo correspondiente al pais, sin llamadas a servidor, todo queda en tu dispositivo. La interfaz está diseñada con **[Luz DS](https://github.com/nandovejer/luz)**, lo que le da un aspecto limpio y minimalista.
+Demos de las **APIs de IA integradas de Chrome** (Gemini Nano): todo se ejecuta en tu dispositivo, sin servidor y, una vez descargado el modelo, sin conexión. Hecho con **[Astro](https://astro.build/)**, **TypeScript** y **[Luz DS](https://github.com/nandovejer/luz)**.
 
-## ✨ Características Principales
+## ✨ Demos
 
-  * **Traducción sin conexión:** Utiliza los modelos de traducción incorporados en Chrome, lo que significa que las traducciones se realizan localmente sin necesidad de una conexión a internet una vez que los modelos se han descargado.
-  * **Selección de idiomas:** Permite a los usuarios elegir el idioma de origen y el de destino de forma sencilla.
-  * **Interfaz de usuario simple:** El diseño es intuitivo y accesible, gracias al uso del sistema de diseño Luz DS.
+| Ruta | Qué hace | API |
+|---|---|---|
+| `/` | Estado de las 7 APIs en tu navegador y descarga de modelos | todas |
+| `/toolkit/` | Un texto, varias acciones (resumir, traducir, corregir, simplificar, reescribir) con los resultados para comparar | Summarizer, Translator, Prompt |
+| `/prompt/` | Playground con streaming | Prompt |
+| `/chat/` | Chat con historial, botón de parar y varias sesiones que se pueden bifurcar | Prompt |
+| `/json/` | Datos estructurados que siguen un JSON Schema | Prompt |
+| `/recipes/` | Clasificar, extraer, etiquetar, moderar, describir productos, preguntas | Prompt |
+| `/synonyms/` | Buscador de sinónimos | Prompt |
+| `/weather/` | Datos del tiempo → texto | Prompt |
+| `/image/` | Preguntas sobre una imagen | Prompt multimodal |
+| `/summarize/` | tldr, key-points, teaser, headline | Summarizer |
+| `/summary-of-summaries/` | Trocea un texto largo, resume cada parte y resume los resúmenes | Summarizer |
+| `/translate/` | Detecta el idioma y traduce | Language Detector + Translator |
+| `/proofread/` | Correcciones marcadas, con tipo y explicación | Proofreader |
+| `/write/` | Escribir y reescribir | Writer / Rewriter |
+| `/assistant/` | Editor que corrige y cambia el tono | Proofreader + Prompt |
 
 ## ⚠️ Requisitos
 
-Esta aplicación depende de la API experimental **Chrome Translator**, que solo está disponible en **Chrome 138+ en versiones de escritorio**. No funcionará en otros navegadores ni en versiones anteriores de Chrome.
+Chrome de escritorio reciente con Gemini Nano (Chrome 138+ para Summarizer, Translator y Language Detector). Los modelos se descargan la primera vez, tras un clic (**Prepare** en la página de estado). Mira `chrome://on-device-internals` si algo falla. Proofreader, Writer y Rewriter son experimentales u obsoletas: cuando faltan, el motor usa la Prompt API y lo indica (`fallback`).
 
-## 🚀 Cómo Usar
+## 🚀 Desarrollo
 
-1.  **Abre el archivo:** Simplemente abre el archivo `index.html` en una versión de Chrome compatible (o ejecuta `npm start` para servirlo en local).
-2.  **Selecciona los idiomas:** Elige el idioma de origen y el de destino en los menús desplegables.
-3.  **Introduce el texto:** Escribe o pega el texto que deseas traducir en el área de texto.
-4.  **Traduce:** Haz clic en el botón "Translate" para ver el resultado.
-
-## 📦 Estilos (Luz DS)
-
-Luz DS se instala desde npm y se copia a `vendor/luz/` (que sí se sube al repo, porque GitHub Pages no ejecuta `npm install`):
+Requiere Node 22.12 o superior.
 
 ```bash
-npm install        # instala Luz DS y copia sus CSS y fuentes a vendor/luz/
-npm run vendor     # vuelve a copiarlos tras actualizar la versión
-npm run check      # valida las clases Luz de index.html con luz-check
-npm start          # sirve la web en local
+npm install
+npm run dev        # servidor local
+npm test           # tests del motor (Vitest, con mocks de las APIs)
+npm run typecheck  # tsc --noEmit
+npm run check      # luz-check: valida las clases de Luz DS
+npm run build      # genera dist/
 ```
 
-## 🛠️ Cómo Funciona el Código
+## 🧠 `ai-engine-local`
 
-El corazón de la aplicación es el código JavaScript, que interactúa con el objeto `Translator` que proporciona la API de Chrome.
+El motor es un módulo TypeScript en [src/lib/ai-engine-local/](src/lib/ai-engine-local/) que **corre en el navegador**: Gemini Nano solo existe ahí, así que no hay un endpoint de servidor. Es el punto de entrada único para todas las demos.
 
-1.  **Verificación de idiomas:** Antes de traducir, el código usa `Translator.availability()` para comprobar si existe un modelo de traducción para el par de idiomas seleccionado en el dispositivo.
-2.  **Gestión de modelos:** Si un modelo no está disponible, la API puede indicar que es `"downloadable"`. El código incluye un monitor de progreso que muestra al usuario cuándo se está descargando un modelo.
-3.  **Traducción:** Una vez que el modelo está listo (`"available"`), se llama a `Translator.create()` para crear una instancia del traductor. Luego, el método `translator.translate(text)` realiza la traducción.
-4.  **Limitaciones:** La API **no soporta todos los pares de idiomas**. Si una combinación específica (por ejemplo, inglés a catalán) no está disponible, la aplicación mostrará un mensaje de "Unsupported pair" (par no soportado), ya que la API solo incluye modelos para un conjunto limitado de idiomas comunes.
+```ts
+import { createLocalAIEngine } from "@engine";
+
+const engine = createLocalAIEngine({ language: "es" });
+
+await engine.status((api, state) => console.log(api, state)); // disponibilidad de cada API
+engine.on("download", ({ api, progress }) => {});              // progreso de descarga
+await engine.prepare("summarize");                             // descarga el modelo (desde un clic)
+
+const res = await engine.run({ task: "summarize", input, options: { type: "key-points" }, signal });
+// res.data, res.meta = { task, api, fallback, ms }
+
+for await (const chunk of engine.stream({ task: "prompt", input, signal })) {}
+
+const chat = await engine.chat({ system: "Sé breve" });         // send, stream, clone, usage, destroy
+engine.dispose();
+```
+
+Cada `task` está tipada (opciones y resultado): `prompt`, `json`, `classify`, `extract`, `tags`, `moderate`, `describe`, `questions`, `synonyms`, `weather`, `image`, `summarize`, `summarize-long`, `detect`, `translate`, `universal-translate`, `proofread`, `write`, `rewrite`, `simplify`, `tone`.
+
+Resuelve en un solo sitio: caché de instancias por opciones, sesiones de usar y tirar (`clone()`) para las tareas sin estado, alternativas a la Prompt API, variantes regionales de idioma (`pt-BR` → `pt`), cancelación con `AbortSignal` y errores normalizados (`AIEngineError`: `unsupported`, `unavailable`, `needs-user-activation`, `aborted`, `quota-exceeded`, `invalid-output`, `invalid-input`).
+
+La temperatura y el `topK` no se exponen: Chrome los limita a extensiones.
 
 ## 📚 Créditos
 
-  * **Luz DS:** Este proyecto utiliza el sistema de diseño [Luz DS](https://github.com/nandovejer/luz) (`@luz-ds/tokens` y `@luz-ds/core`) para el diseño y la maquetación.
-  * **Chrome Translator API:** La funcionalidad se basa en la [API de Traductor de Chrome](https://www.google.com/search?q=https://developer.chrome.com/docs/web-platform/translator-api), una nueva característica de la plataforma web.
+* **[Luz DS](https://github.com/nandovejer/luz):** sistema de diseño (`@luz-ds/tokens`, `core` y `catalog`).
+* **[Chrome Built-in AI](https://developer.chrome.com/docs/ai/built-in)** y los [Web AI demos](https://chrome.dev/web-ai-demos/) en los que se basan las demos.

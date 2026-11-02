@@ -1,0 +1,93 @@
+---
+import { ClientRouter } from "astro:transitions";
+import "@luz-ds/tokens/css";
+import "@luz-ds/core/css";
+import "@luz-ds/catalog/components/sidebar.css";
+import "@luz-ds/catalog/components/app-bar.css";
+import "../styles/app.css";
+import themeBoot from "@luz-ds/core/theme-boot?raw";
+import { DEMOS, GROUPS, demoHref, type DemoGroup } from "../data/demos";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Demos of Chrome's built-in AI APIs, running on your device." } = Astro.props;
+// The file documents itself with a <script> tag in a comment, which would close this one early.
+const bootScript = themeBoot.replace(/\/\*[\s\S]*?\*\//g, "").replaceAll("</script", "<\\/script");
+const current = Astro.url.pathname;
+const groups = Object.keys(GROUPS) as DemoGroup[];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title} · Chrome Local AI</title>
+    <script is:inline set:html={bootScript} />
+    <ClientRouter />
+  </head>
+  <body>
+    <a class="luz-skip-link" href="#main-content">Skip to content</a>
+    <div class="o-shell">
+      <nav class="luz-sidebar" id="app-nav" aria-label="Main" popover>
+        <a class="luz-sidebar__brand" href={demoHref("")}>
+          <span class="luz-sidebar__brand-name">Chrome Local AI</span>
+        </a>
+        {
+          groups.map((group) => (
+            <div class="luz-sidebar__section">
+              <span class="luz-sidebar__section-label">{GROUPS[group]}</span>
+              {DEMOS.filter((d) => d.group === group).map((d) => (
+                <a
+                  class="luz-sidebar__link"
+                  href={demoHref(d.slug)}
+                  aria-current={current === demoHref(d.slug) ? "page" : undefined}
+                >
+                  {d.title}
+                </a>
+              ))}
+            </div>
+          ))
+        }
+      </nav>
+      <div class="o-main">
+        <header class="luz-app-bar o-sticky">
+          <div class="o-row">
+            <button class="luz-nav-toggle" type="button" popovertarget="app-nav" aria-label="Menu">
+              <span class="luz-nav-toggle__bar"></span><span class="luz-nav-toggle__bar"></span><span class="luz-nav-toggle__bar"></span>
+            </button>
+            <p class="luz-app-bar__product">Chrome Local AI</p>
+            <div class="o-row luz-app-bar__actions">
+              <luz-theme-mode inline transition:persist="mode">
+                <fieldset class="luz-theme-mode__group">
+                  <legend class="luz-theme-mode__legend">Color mode</legend>
+                  <label class="luz-theme-mode__option"><input class="luz-theme-mode__input" type="radio" name="luz-theme-mode" value="auto" checked />Auto</label>
+                  <label class="luz-theme-mode__option"><input class="luz-theme-mode__input" type="radio" name="luz-theme-mode" value="light" />Light</label>
+                  <label class="luz-theme-mode__option"><input class="luz-theme-mode__input" type="radio" name="luz-theme-mode" value="dark" />Dark</label>
+                  <label class="luz-theme-mode__option"><input class="luz-theme-mode__input" type="radio" name="luz-theme-mode" value="high-contrast" />High contrast</label>
+                </fieldset>
+              </luz-theme-mode>
+            </div>
+          </div>
+        </header>
+        <main class="o-container o-stack" id="main-content" tabindex="-1">
+          <slot />
+        </main>
+        <footer class="o-container">
+          <p class="meta">
+            Runs on Gemini Nano, in your browser: nothing you type leaves this device. Built with
+            <a href="https://github.com/nandovejer/luz">Luz DS</a>, Astro and TypeScript.
+          </p>
+        </footer>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  import "../scripts/layout";
+</script>

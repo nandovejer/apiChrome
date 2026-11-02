@@ -1,0 +1,25 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"div"> {
+  label?: string;
+  /** Run is a submit button, for a form. */
+  submit?: boolean;
+  secondary?: boolean;
+}
+
+const { label = "Run", submit = false, secondary = false, class: className, ...rest } = Astro.props;
+---
+
+<div class:list={["o-stack", className]} {...rest}>
+  <div class="runbar">
+    <button class={`luz-btn ${secondary ? "luz-btn--secondary" : "luz-btn--primary"}`} type={submit ? "submit" : "button"} data-run>{label}</button>
+    <button class="luz-btn luz-btn--outline" type="button" data-stop hidden>Stop</button>
+    <slot />
+    <progress class="luz-progress" max="100" value="0" data-download hidden aria-label="Downloading the model"></progress>
+  </div>
+  <div class="luz-alert luz-alert--error" data-error hidden role="alert">
+    <div class="luz-alert__icon" aria-hidden="true">×</div>
+    <div><div class="luz-alert__body" data-error-text></div></div>
+  </div>
+</div>

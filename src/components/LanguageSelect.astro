@@ -1,0 +1,22 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { LANGUAGES } from "../data/languages";
+
+interface Props extends Omit<HTMLAttributes<"select">, "id" | "value"> {
+  id: string;
+  label: string;
+  value?: string;
+  /** Adds an "Auto-detect" option first. */
+  auto?: boolean;
+}
+
+const { id, label, value = "en", auto = false, ...rest } = Astro.props;
+---
+
+<div class="luz-field">
+  <label class="luz-field__label" for={id}>{label}</label>
+  <select class="luz-select" id={id} name={id} {...rest}>
+    {auto && <option value="auto" selected={value === "auto"}>Auto-detect</option>}
+    {LANGUAGES.map((l) => <option value={l.code} selected={l.code === value}>{l.name}</option>)}
+  </select>
+</div>

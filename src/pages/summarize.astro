@@ -1,0 +1,49 @@
+---
+import AppLayout from "../layouts/AppLayout.astro";
+import DemoShell from "../components/DemoShell.astro";
+import RunBar from "../components/RunBar.astro";
+import Output from "../components/Output.astro";
+---
+
+<AppLayout title="Summarizer">
+  <DemoShell slug="summarize">
+    <form class="o-stack" data-form>
+      <div class="luz-field">
+        <label class="luz-field__label" for="input">Text to summarize</label>
+        <textarea class="luz-input luz-input--textarea" id="input" rows="10" required></textarea>
+      </div>
+      <div class="o-grid o-grid--3">
+        <div class="luz-field">
+          <label class="luz-field__label" for="type">Type</label>
+          <select class="luz-select" id="type">
+            <option value="key-points">Key points</option>
+            <option value="tldr">TL;DR</option>
+            <option value="teaser">Teaser</option>
+            <option value="headline">Headline</option>
+          </select>
+        </div>
+        <div class="luz-field">
+          <label class="luz-field__label" for="length">Length</label>
+          <select class="luz-select" id="length">
+            <option value="short">Short</option>
+            <option value="medium" selected>Medium</option>
+            <option value="long">Long</option>
+          </select>
+        </div>
+        <div class="luz-field">
+          <label class="luz-field__label" for="format">Format</label>
+          <select class="luz-select" id="format">
+            <option value="markdown">Markdown</option>
+            <option value="plain-text">Plain text</option>
+          </select>
+        </div>
+      </div>
+      <RunBar label="Summarize" submit />
+    </form>
+    <Output id="out" label="Summary" placeholder="The summary streams here." />
+  </DemoShell>
+</AppLayout>
+
+<script>
+  import "../scripts/summarize";
+</script>

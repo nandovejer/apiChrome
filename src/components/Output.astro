@@ -1,0 +1,23 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends Omit<HTMLAttributes<"div">, "id"> {
+  id: string;
+  label?: string;
+  placeholder?: string;
+  copy?: boolean;
+  /** Draws the result line (API and time); a page with one line of its own turns it off. */
+  meta?: boolean;
+}
+
+const { id, label = "Result", placeholder = "The result appears here.", copy = true, meta = true, class: className, ...rest } = Astro.props;
+---
+
+<div class:list={["o-stack", className]} {...rest}>
+  <div class="o-row">
+    <h2 id={`${id}-label`}>{label}</h2>
+    {copy && <button class="luz-copy-btn" type="button" data-copy-from={id} aria-label={`Copy: ${label}`}>Copy</button>}
+  </div>
+  <div class="output" id={id} role="region" aria-labelledby={`${id}-label`} aria-live="polite" data-placeholder={placeholder}></div>
+  {meta && <p class="meta" data-meta hidden></p>}
+</div>

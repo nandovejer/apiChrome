@@ -1,0 +1,31 @@
+---
+import AppLayout from "../layouts/AppLayout.astro";
+import DemoShell from "../components/DemoShell.astro";
+import RunBar from "../components/RunBar.astro";
+import Output from "../components/Output.astro";
+import { WEATHER } from "../data/samples";
+---
+
+<AppLayout title="Weather describer">
+  <DemoShell slug="weather">
+    <form class="o-stack" data-form>
+      <div class="luz-field">
+        <label class="luz-field__label" for="city">City (sample data stored in this app)</label>
+        <select class="luz-select" id="city">
+          {WEATHER.map((w) => <option value={w.city}>{w.city}</option>)}
+        </select>
+      </div>
+      <div class="luz-field">
+        <label class="luz-field__label" for="data">Weather data</label>
+        <textarea class="luz-input luz-input--textarea" id="data" rows="9" spellcheck="false" aria-describedby="data-help"></textarea>
+        <div class="luz-field__helper" id="data-help">Edit any value to see how the description changes.</div>
+      </div>
+      <RunBar label="Describe the weather" submit />
+    </form>
+    <Output id="out" label="Description" placeholder="The description streams here." />
+  </DemoShell>
+</AppLayout>
+
+<script>
+  import "../scripts/weather";
+</script>

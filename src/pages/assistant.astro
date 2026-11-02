@@ -1,0 +1,41 @@
+---
+import AppLayout from "../layouts/AppLayout.astro";
+import DemoShell from "../components/DemoShell.astro";
+import RunBar from "../components/RunBar.astro";
+---
+
+<AppLayout title="Writing assistant">
+  <DemoShell slug="assistant">
+    <div class="o-stack">
+      <div class="luz-field">
+        <label class="luz-field__label" for="editor">Your text</label>
+        <textarea class="luz-input luz-input--textarea" id="editor" rows="9" placeholder="Write or paste here…"></textarea>
+      </div>
+      <RunBar label="Correct" secondary>
+        <button class="luz-btn luz-btn--outline" type="button" data-act="formal">Make formal</button>
+        <button class="luz-btn luz-btn--outline" type="button" data-act="friendly">Make friendly</button>
+        <button class="luz-btn luz-btn--outline" type="button" data-act="concise">Make concise</button>
+        <button class="luz-btn luz-btn--outline" type="button" data-act="simplify">Simplify</button>
+      </RunBar>
+    </div>
+    <section class="o-stack" data-suggestion hidden>
+      <h2 id="suggestion-label">Suggestion</h2>
+      <div class="output" id="suggestion" role="region" aria-labelledby="suggestion-label" aria-live="polite"></div>
+      <p class="meta" data-meta hidden></p>
+      <div class="o-row">
+        <button class="luz-btn luz-btn--primary" type="button" data-apply>Replace my text</button>
+        <button class="luz-btn luz-btn--ghost" type="button" data-undo hidden>Undo</button>
+      </div>
+      <div class="luz-table-wrap" data-corrections hidden role="region" aria-label="Corrections" tabindex="0">
+        <table class="luz-table">
+          <thead><tr><th scope="col">Original</th><th scope="col">Correction</th><th scope="col">Type</th><th scope="col">Why</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </section>
+  </DemoShell>
+</AppLayout>
+
+<script>
+  import "../scripts/assistant";
+</script>

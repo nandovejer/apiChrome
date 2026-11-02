@@ -1,0 +1,32 @@
+---
+import AppLayout from "../layouts/AppLayout.astro";
+import DemoShell from "../components/DemoShell.astro";
+import RunBar from "../components/RunBar.astro";
+import Output from "../components/Output.astro";
+---
+
+<AppLayout title="Image analyzer">
+  <DemoShell slug="image">
+    <form class="o-stack" data-form>
+      <div class="luz-field">
+        <label class="luz-field__label" for="file">Image</label>
+        <input class="luz-input" id="file" type="file" accept="image/*" required />
+      </div>
+      <figure class="luz-figure" data-preview hidden>
+        <img class="preview" id="preview" alt="The image you chose" />
+      </figure>
+      <div class="luz-field">
+        <label class="luz-field__label" for="question">Question</label>
+        <input class="luz-input" id="question" list="questions" autocomplete="off" />
+        <datalist id="questions"></datalist>
+      </div>
+      <RunBar label="Analyze" submit />
+    </form>
+    <Output id="out" label="Answer" placeholder="The answer streams here." />
+    <p class="meta">The image is read by the model on your device; it is never uploaded.</p>
+  </DemoShell>
+</AppLayout>
+
+<script>
+  import "../scripts/image";
+</script>

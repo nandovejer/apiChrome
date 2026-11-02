@@ -1,0 +1,45 @@
+---
+import AppLayout from "../layouts/AppLayout.astro";
+import DemoShell from "../components/DemoShell.astro";
+---
+
+<AppLayout title="Local chat">
+  <DemoShell slug="chat">
+    <div class="o-stack">
+      <div class="o-row">
+        <div class="luz-field">
+          <label class="luz-field__label" for="session">Session</label>
+          <select class="luz-select" id="session"></select>
+        </div>
+        <button class="luz-btn luz-btn--secondary" type="button" data-new>New</button>
+        <button class="luz-btn luz-btn--outline" type="button" data-fork>Fork</button>
+        <button class="luz-btn luz-btn--ghost" type="button" data-delete>Delete</button>
+      </div>
+      <div class="luz-field">
+        <label class="luz-field__label" for="usage">Context used</label>
+        <meter class="luz-meter" id="usage" min="0" max="100" value="0">0</meter>
+      </div>
+      <div class="chat-log" id="log" role="log" aria-live="polite" aria-label="Conversation"></div>
+      <form class="o-stack" data-form>
+        <div class="luz-field">
+          <label class="luz-field__label" for="message">Message</label>
+          <textarea class="luz-input luz-input--textarea" id="message" rows="2" required placeholder="Say something…"></textarea>
+        </div>
+        <div class="runbar">
+          <button class="luz-btn luz-btn--primary" type="submit" data-run>Send</button>
+          <button class="luz-btn luz-btn--outline" type="button" data-stop hidden>Stop</button>
+          <progress class="luz-progress" max="100" value="0" data-download hidden aria-label="Downloading the model"></progress>
+        </div>
+        <div class="luz-alert luz-alert--error" data-error hidden role="alert">
+          <div class="luz-alert__icon" aria-hidden="true">×</div>
+          <div><div class="luz-alert__body" data-error-text></div></div>
+        </div>
+      </form>
+      <p class="meta">Each session keeps its own history. “Fork” copies the conversation so you can take it two ways. History is saved in this browser.</p>
+    </div>
+  </DemoShell>
+</AppLayout>
+
+<script>
+  import "../scripts/chat";
+</script>

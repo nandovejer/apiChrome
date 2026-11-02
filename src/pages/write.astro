@@ -1,0 +1,81 @@
+---
+import AppLayout from "../layouts/AppLayout.astro";
+import DemoShell from "../components/DemoShell.astro";
+import RunBar from "../components/RunBar.astro";
+import Output from "../components/Output.astro";
+---
+
+<AppLayout title="Writer and rewriter">
+  <DemoShell slug="write">
+    <nav class="luz-tabs" aria-label="Mode">
+      <a class="luz-tab" href="#panel-write">Write</a>
+      <a class="luz-tab" href="#panel-rewrite">Rewrite</a>
+    </nav>
+
+    <div class="luz-tabpanel" id="panel-write">
+      <form class="o-stack" data-form="write">
+        <div class="luz-field">
+          <label class="luz-field__label" for="w-input">What should it write?</label>
+          <textarea class="luz-input luz-input--textarea" id="w-input" rows="4" required></textarea>
+        </div>
+        <div class="luz-field">
+          <label class="luz-field__label" for="w-context">Context (optional)</label>
+          <input class="luz-input" id="w-context" />
+        </div>
+        <div class="o-grid o-grid--2">
+          <div class="luz-field">
+            <label class="luz-field__label" for="w-tone">Tone</label>
+            <select class="luz-select" id="w-tone">
+              <option value="formal">Formal</option>
+              <option value="neutral" selected>Neutral</option>
+              <option value="casual">Casual</option>
+            </select>
+          </div>
+          <div class="luz-field">
+            <label class="luz-field__label" for="w-length">Length</label>
+            <select class="luz-select" id="w-length">
+              <option value="short">Short</option>
+              <option value="medium" selected>Medium</option>
+              <option value="long">Long</option>
+            </select>
+          </div>
+        </div>
+        <RunBar label="Write" submit />
+        <Output id="w-out" label="Text" placeholder="The text streams here." />
+      </form>
+    </div>
+
+    <div class="luz-tabpanel" id="panel-rewrite">
+      <form class="o-stack" data-form="rewrite">
+        <div class="luz-field">
+          <label class="luz-field__label" for="r-input">Text to rewrite</label>
+          <textarea class="luz-input luz-input--textarea" id="r-input" rows="5" required></textarea>
+        </div>
+        <div class="o-grid o-grid--2">
+          <div class="luz-field">
+            <label class="luz-field__label" for="r-tone">Tone</label>
+            <select class="luz-select" id="r-tone">
+              <option value="as-is">As is</option>
+              <option value="more-formal" selected>More formal</option>
+              <option value="more-casual">More casual</option>
+            </select>
+          </div>
+          <div class="luz-field">
+            <label class="luz-field__label" for="r-length">Length</label>
+            <select class="luz-select" id="r-length">
+              <option value="as-is" selected>As is</option>
+              <option value="shorter">Shorter</option>
+              <option value="longer">Longer</option>
+            </select>
+          </div>
+        </div>
+        <RunBar label="Rewrite" submit />
+        <Output id="r-out" label="Rewritten text" placeholder="The text streams here." />
+      </form>
+    </div>
+  </DemoShell>
+</AppLayout>
+
+<script>
+  import "../scripts/write";
+</script>

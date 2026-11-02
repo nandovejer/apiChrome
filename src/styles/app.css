@@ -1,0 +1,116 @@
+/* App-specific rules, on LUZ tokens only. */
+
+.output {
+  min-height: 3rem;
+  padding: var(--luz-space-md);
+  border: 1px solid var(--luz-divider);
+  border-radius: var(--luz-radius-md);
+  background: var(--luz-surface);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.output > :where(p, ul) {
+  margin-block: 0 var(--luz-space-xs);
+  white-space: normal;
+}
+
+.output:empty::before {
+  content: attr(data-placeholder);
+  color: var(--luz-text-muted);
+}
+
+.meta {
+  margin: 0;
+  font-size: var(--luz-text-sm);
+  color: var(--luz-text-muted);
+}
+
+.demo-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--luz-space-xs);
+  align-items: center;
+}
+
+.api-pill {
+  display: inline-flex;
+  gap: var(--luz-space-xs);
+  align-items: center;
+  font-size: var(--luz-text-sm);
+}
+
+.runbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--luz-space-sm);
+  align-items: center;
+}
+
+.runbar progress {
+  flex: 1 1 12rem;
+}
+
+.chat-log {
+  display: flex;
+  flex-direction: column;
+  gap: var(--luz-space-sm);
+  min-height: 12rem;
+  max-height: 28rem;
+  overflow-y: auto;
+  padding: var(--luz-space-md);
+  border: 1px solid var(--luz-divider);
+  border-radius: var(--luz-radius-md);
+  background: var(--luz-surface-muted);
+}
+
+.chat-msg {
+  max-width: 85%;
+  padding: var(--luz-space-xs) var(--luz-space-sm);
+  border-radius: var(--luz-radius-md);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.chat-msg[data-role="user"] {
+  align-self: flex-end;
+  background: var(--luz-brand-fill);
+  color: var(--luz-text-on-fill);
+}
+
+.chat-msg[data-role="assistant"] {
+  align-self: flex-start;
+  background: var(--luz-surface);
+  border: 1px solid var(--luz-divider);
+}
+
+mark.fix {
+  background: var(--luz-brand-subtle);
+  color: inherit;
+  border-bottom: 2px solid var(--luz-brand-fill);
+  border-radius: var(--luz-radius-sm);
+  cursor: help;
+}
+
+.preview {
+  max-width: 100%;
+  max-height: 20rem;
+  border-radius: var(--luz-radius-md);
+}
+
+.result-card + .result-card {
+  margin-block-start: var(--luz-space-sm);
+}
+
+.demo-grid {
+  list-style: none;
+  padding: 0;
+}
+
+.demo-grid .luz-card__title a {
+  text-decoration: none;
+}
+
+.sidebar-group + .sidebar-group {
+  margin-block-start: var(--luz-space-sm);
+}

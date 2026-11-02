@@ -1,0 +1,63 @@
+---
+import { API_INFO, demoBySlug } from "../data/demos";
+
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends Omit<HTMLAttributes<"section">, "slot"> {
+  slug: string;
+  heading?: string;
+}
+
+const { slug, heading, class: className, ...rest } = Astro.props;
+const demo = demoBySlug(slug);
+const MATURITY = {
+  stable: null,
+  experimental: ["yellow", "Experimental: it may not be available in your Chrome"],
+  deprecated: ["red", "Deprecated: when it is missing, the Prompt API does the work"],
+} as const;
+const notice = MATURITY[demo.maturity];
+---
+
+<section class:list={["o-stack", className]} data-demo={slug} {...rest}>
+  <header class="o-stack">
+    <h1>{heading ?? demo.title}</h1>
+    <p>{demo.summary}</p>
+    <div class="demo-head">
+      {
+        demo.uses.map((api) => (
+          <span class="api-pill">
+            {API_INFO[api].label}
+            <span class="luz-tag luz-tag--gray" data-api-tag={api}>…</span>
+          </span>
+        ))
+      }
+    </div>
+    {
+      notice && (
+        <div class={`luz-alert luz-alert--${notice[0] === "red" ? "warning" : "info"}`}>
+          <div class="luz-alert__icon" aria-hidden="true">!</div>
+          <div><div class="luz-alert__body">{notice[1]}.</div></div>
+        </div>
+      )
+    }
+    <div class="luz-alert luz-alert--error" data-unsupported hidden>
+      <div class="luz-alert__icon" aria-hidden="true">×</div>
+      <div>
+        <div class="luz-alert__title">This browser cannot run this demo</div>
+        <div class="luz-alert__body">
+          Use Chrome on desktop, then check <code>chrome://on-device-internals</code> and the
+          <a href="https://developer.chrome.com/docs/ai/get-started">setup guide</a>. The
+          <a href={import.meta.env.BASE_URL}>Status page</a> says which APIs are missing.
+        </div>
+      </div>
+    </div>
+    {
+      demo.source && (
+        <p class="meta">
+          Based on the <a href={demo.source.url}>{demo.source.label}</a>.
+        </p>
+      )
+    }
+  </header>
+  <slot />
+</section>

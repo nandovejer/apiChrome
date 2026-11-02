@@ -1,0 +1,61 @@
+---
+import AppLayout from "../layouts/AppLayout.astro";
+import DemoShell from "../components/DemoShell.astro";
+import RunBar from "../components/RunBar.astro";
+import Output from "../components/Output.astro";
+---
+
+<AppLayout title="Recipes">
+  <DemoShell slug="recipes">
+    <form class="o-stack" data-form>
+      <div class="luz-field">
+        <label class="luz-field__label" for="recipe">Recipe</label>
+        <select class="luz-select" id="recipe">
+          <option value="classify">Classify a message</option>
+          <option value="extract">Extract emails, phones and names</option>
+          <option value="tags">Tags and keywords</option>
+          <option value="moderate">Detect inappropriate content</option>
+          <option value="describe">Product description</option>
+          <option value="questions">Questions from a text</option>
+        </select>
+      </div>
+      <div class="luz-field">
+        <label class="luz-field__label" for="input">Text</label>
+        <textarea class="luz-input luz-input--textarea" id="input" rows="6" required></textarea>
+      </div>
+      <div class="luz-field" data-for="classify">
+        <label class="luz-field__label" for="labels">Categories, separated by commas</label>
+        <input class="luz-input" id="labels" value="billing, technical support, sales, complaint, other" />
+      </div>
+      <fieldset class="luz-fieldset" data-for="extract" hidden>
+        <legend>Fields</legend>
+        <div class="luz-check-group">
+          <div class="luz-check-item"><input type="checkbox" id="f-emails" value="emails" checked /><label for="f-emails">Emails</label></div>
+          <div class="luz-check-item"><input type="checkbox" id="f-phones" value="phones" checked /><label for="f-phones">Phones</label></div>
+          <div class="luz-check-item"><input type="checkbox" id="f-names" value="names" checked /><label for="f-names">Names</label></div>
+          <div class="luz-check-item"><input type="checkbox" id="f-urls" value="urls" /><label for="f-urls">URLs</label></div>
+          <div class="luz-check-item"><input type="checkbox" id="f-dates" value="dates" /><label for="f-dates">Dates</label></div>
+        </div>
+      </fieldset>
+      <div class="luz-field" data-for="tags questions" hidden>
+        <label class="luz-field__label" for="count">How many <output class="luz-output" id="count-out" for="count">5</output></label>
+        <input class="luz-input" id="count" type="range" min="1" max="10" value="5" data-output="count-out" />
+      </div>
+      <RunBar label="Run recipe" submit />
+    </form>
+    <p class="luz-alert luz-alert--info" data-verdict hidden role="status"></p>
+    <Output id="text-out" label="Result" placeholder="The result appears here." meta={false} />
+    <p class="meta" data-meta hidden></p>
+    <section class="o-stack" data-json-panel hidden>
+      <div class="o-row">
+        <h2>Structured result</h2>
+        <button class="luz-copy-btn" type="button" data-copy-from="json-out" aria-label="Copy the JSON">Copy</button>
+      </div>
+      <pre class="luz-code-block" data-lang="json" tabindex="0" role="region" aria-label="Structured result"><code id="json-out"></code></pre>
+    </section>
+  </DemoShell>
+</AppLayout>
+
+<script>
+  import "../scripts/recipes";
+</script>
