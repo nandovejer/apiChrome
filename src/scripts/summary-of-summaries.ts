@@ -1,6 +1,7 @@
 import { chunkText, type SummaryType } from "@engine";
 import { $, bindRange, onDemo, renderMarkdown } from "../lib/ui";
 import { samples } from "../data/samples";
+import { m } from "../i18n/client";
 
 onDemo("summary-of-summaries", ({ root, engine, runner }) => {
   const input = $<HTMLTextAreaElement>(root, "#input");
@@ -14,7 +15,7 @@ onDemo("summary-of-summaries", ({ root, engine, runner }) => {
 
   const describe = () => {
     const parts = chunkText(input.value, Number(chunk.value)).length;
-    info.textContent = `${input.value.length} characters: ${parts} chunk${parts === 1 ? "" : "s"}`;
+    info.textContent = m().sos.sizeInfo(input.value.length, parts);
   };
   input.addEventListener("input", describe);
   chunk.addEventListener("input", describe);
@@ -23,7 +24,7 @@ onDemo("summary-of-summaries", ({ root, engine, runner }) => {
   const off = engine.on("progress", ({ done, total }) => {
     steps.hidden = false;
     steps.value = Math.round((done / total) * 100);
-    steps.setAttribute("aria-label", `Summarizing chunks: ${done} of ${total}`);
+    steps.setAttribute("aria-label", m().sos.progress(done, total));
   });
 
   $(root, "[data-form]").addEventListener("submit", (event) => {

@@ -1,5 +1,6 @@
 ---
 import type { HTMLAttributes } from "astro/types";
+import { i18n } from "../i18n/server";
 
 interface Props extends HTMLAttributes<"div"> {
   label?: string;
@@ -8,15 +9,16 @@ interface Props extends HTMLAttributes<"div"> {
   secondary?: boolean;
 }
 
-const { label = "Run", submit = false, secondary = false, class: className, ...rest } = Astro.props;
+const { m } = i18n(Astro.url);
+const { label = m.common.run, submit = false, secondary = false, class: className, ...rest } = Astro.props;
 ---
 
 <div class:list={["o-stack", className]} {...rest}>
   <div class="runbar">
     <button class={`luz-btn ${secondary ? "luz-btn--secondary" : "luz-btn--primary"}`} type={submit ? "submit" : "button"} data-run>{label}</button>
-    <button class="luz-btn luz-btn--outline" type="button" data-stop hidden>Stop</button>
+    <button class="luz-btn luz-btn--outline" type="button" data-stop hidden>{m.common.stop}</button>
     <slot />
-    <progress class="luz-progress" max="100" value="0" data-download hidden aria-label="Downloading the model"></progress>
+    <progress class="luz-progress" max="100" value="0" data-download hidden aria-label={m.common.downloadingModel}></progress>
   </div>
   <div class="luz-alert luz-alert--error" data-error hidden role="alert">
     <div class="luz-alert__icon" aria-hidden="true">×</div>

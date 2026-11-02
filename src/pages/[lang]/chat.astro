@@ -1,0 +1,52 @@
+---
+import AppLayout from "../../layouts/AppLayout.astro";
+import DemoShell from "../../components/DemoShell.astro";
+import { getStaticPaths } from "../../i18n";
+import { i18n } from "../../i18n/server";
+
+export { getStaticPaths };
+const { m } = i18n(Astro.url);
+const t = m.chat;
+---
+
+<AppLayout slug="chat">
+  <DemoShell slug="chat">
+    <div class="o-stack">
+      <div class="o-row">
+        <div class="luz-field">
+          <label class="luz-field__label" for="session">{t.session}</label>
+          <select class="luz-select" id="session"></select>
+        </div>
+        <button class="luz-btn luz-btn--secondary" type="button" data-new>{t.new}</button>
+        <button class="luz-btn luz-btn--outline" type="button" data-fork>{t.fork}</button>
+        <button class="luz-btn luz-btn--ghost" type="button" data-delete>{t.delete}</button>
+      </div>
+      <div class="luz-field">
+        <label class="luz-field__label" for="usage">{t.contextUsed}</label>
+        <meter class="luz-meter" id="usage" min="0" max="100" value="0" aria-describedby="usage-help">0</meter>
+        <div class="luz-field__helper" id="usage-help">{t.contextHelp}</div>
+      </div>
+      <div class="chat-log" id="log" role="log" aria-live="polite" aria-label={t.conversation}></div>
+      <form class="o-stack" data-form>
+        <div class="luz-field">
+          <label class="luz-field__label" for="message">{t.message}</label>
+          <textarea class="luz-input luz-input--textarea" id="message" rows="2" required placeholder={t.placeholder}></textarea>
+        </div>
+        <div class="runbar">
+          <button class="luz-btn luz-btn--primary" type="submit" data-run>{t.send}</button>
+          <button class="luz-btn luz-btn--outline" type="button" data-stop hidden>{m.common.stop}</button>
+          <progress class="luz-progress" max="100" value="0" data-download hidden aria-label={m.common.downloadingModel}></progress>
+        </div>
+        <div class="luz-alert luz-alert--error" data-error hidden role="alert">
+          <div class="luz-alert__icon" aria-hidden="true">×</div>
+          <div><div class="luz-alert__body" data-error-text></div></div>
+        </div>
+      </form>
+      <p class="meta">{t.help}</p>
+    </div>
+  </DemoShell>
+</AppLayout>
+
+<script>
+  import "../../scripts/chat";
+</script>

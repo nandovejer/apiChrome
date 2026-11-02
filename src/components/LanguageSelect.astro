@@ -1,6 +1,7 @@
 ---
 import type { HTMLAttributes } from "astro/types";
 import { LANGUAGES } from "../data/languages";
+import { langOfPath, languageName, messages } from "../i18n";
 
 interface Props extends Omit<HTMLAttributes<"select">, "id" | "value"> {
   id: string;
@@ -11,12 +12,14 @@ interface Props extends Omit<HTMLAttributes<"select">, "id" | "value"> {
 }
 
 const { id, label, value = "en", auto = false, ...rest } = Astro.props;
+const lang = langOfPath(Astro.url.pathname);
+const options = LANGUAGES.map((code) => ({ code, name: languageName(code, lang) })).sort((a, b) => a.name.localeCompare(b.name, lang));
 ---
 
 <div class="luz-field">
   <label class="luz-field__label" for={id}>{label}</label>
   <select class="luz-select" id={id} name={id} {...rest}>
-    {auto && <option value="auto" selected={value === "auto"}>Auto-detect</option>}
-    {LANGUAGES.map((l) => <option value={l.code} selected={l.code === value}>{l.name}</option>)}
+    {auto && <option value="auto" selected={value === "auto"}>{messages[lang].translate.auto}</option>}
+    {options.map((o) => <option value={o.code} selected={o.code === value}>{o.name}</option>)}
   </select>
 </div>

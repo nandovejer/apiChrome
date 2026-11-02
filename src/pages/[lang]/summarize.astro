@@ -1,0 +1,58 @@
+---
+import AppLayout from "../../layouts/AppLayout.astro";
+import DemoShell from "../../components/DemoShell.astro";
+import RunBar from "../../components/RunBar.astro";
+import Output from "../../components/Output.astro";
+import { getStaticPaths } from "../../i18n";
+import { i18n } from "../../i18n/server";
+
+export { getStaticPaths };
+const { m } = i18n(Astro.url);
+const t = m.summarize;
+const c = m.common;
+---
+
+<AppLayout slug="summarize">
+  <DemoShell slug="summarize">
+    <form class="o-stack" data-form>
+      <div class="luz-field">
+        <label class="luz-field__label" for="input">{t.text}</label>
+        <textarea class="luz-input luz-input--textarea" id="input" rows="10" required></textarea>
+      </div>
+      <div class="o-grid o-grid--3">
+        <div class="luz-field">
+          <label class="luz-field__label" for="type">{c.summaryType}</label>
+          <select class="luz-select" id="type" aria-describedby="type-help">
+            <option value="key-points">{c.summaryTypes["key-points"]}</option>
+            <option value="tldr">{c.summaryTypes.tldr}</option>
+            <option value="teaser">{c.summaryTypes.teaser}</option>
+            <option value="headline">{c.summaryTypes.headline}</option>
+          </select>
+        </div>
+        <div class="luz-field">
+          <label class="luz-field__label" for="length">{c.summaryLength}</label>
+          <select class="luz-select" id="length">
+            <option value="short">{c.summaryLengths.short}</option>
+            <option value="medium" selected>{c.summaryLengths.medium}</option>
+            <option value="long">{c.summaryLengths.long}</option>
+          </select>
+        </div>
+        <div class="luz-field">
+          <label class="luz-field__label" for="format">{t.format}</label>
+          <select class="luz-select" id="format" aria-describedby="format-help">
+            <option value="markdown">{t.formats.markdown}</option>
+            <option value="plain-text">{t.formats["plain-text"]}</option>
+          </select>
+        </div>
+      </div>
+      <p class="meta" id="type-help">{c.summaryTypeHelp}</p>
+      <p class="meta" id="format-help">{t.formatHelp}</p>
+      <RunBar label={t.run} submit />
+    </form>
+    <Output id="out" label={t.summary} placeholder={t.placeholder} />
+  </DemoShell>
+</AppLayout>
+
+<script>
+  import "../../scripts/summarize";
+</script>

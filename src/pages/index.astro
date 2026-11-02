@@ -1,108 +1,32 @@
 ---
-import AppLayout from "../layouts/AppLayout.astro";
-import DemoShell from "../components/DemoShell.astro";
-import { API_INFO, DEMOS, RESOURCES, demoHref } from "../data/demos";
-import type { ApiName } from "@engine";
+import { LANGS, LANG_KEY, LANG_NAMES, pageHref } from "../i18n";
 
-const apis = Object.keys(API_INFO) as ApiName[];
-const MATURITY_TAG = { stable: ["green", "Stable"], experimental: ["yellow", "Experimental"], deprecated: ["red", "Deprecated"] } as const;
-const demos = DEMOS.filter((d) => d.slug);
+const targets = Object.fromEntries(LANGS.map((l) => [l, pageHref(l)]));
 ---
 
-<AppLayout title="Status">
-  <DemoShell slug="" heading="Chrome Local AI">
-    <p>
-      Demos of Chrome's built-in AI: <strong>Gemini Nano</strong> runs on your device, so there is no server to
-      pay for and, once a model is downloaded, no connection is needed.
-    </p>
-
-    <section class="o-stack">
-      <h2>Your browser</h2>
-      <div class="luz-table-wrap" role="region" aria-label="Availability of each API" tabindex="0">
-        <table class="luz-table">
-          <thead>
-            <tr><th scope="col">API</th><th scope="col">State</th><th scope="col">On this device</th><th scope="col"><span class="u-sr-only">Action</span></th></tr>
-          </thead>
-          <tbody>
-            {
-              apis.map((api) => (
-                <tr>
-                  <td data-label="API"><div><strong>{API_INFO[api].label}</strong><br /><code>{API_INFO[api].global}</code> · {API_INFO[api].note}</div></td>
-                  <td data-label="State"><div><span class={`luz-tag luz-tag--${MATURITY_TAG[API_INFO[api].maturity][0]}`}>{MATURITY_TAG[API_INFO[api].maturity][1]}</span></div></td>
-                  <td data-label="On this device"><div><span class="luz-tag luz-tag--gray" data-api-tag={api}>…</span></div></td>
-                  <td data-label="Action">
-                    <div>
-                      <button class="luz-btn luz-btn--outline" type="button" data-prepare={api}>Prepare</button>
-                      <progress class="luz-progress" max="100" value="0" hidden data-row-progress={api} aria-label={`Downloading the ${API_INFO[api].label} model`}></progress>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            }
-          </tbody>
-        </table>
-      </div>
-      <div class="luz-alert luz-alert--error" data-error hidden role="alert">
-        <div class="luz-alert__icon" aria-hidden="true">×</div>
-        <div><div class="luz-alert__body" data-error-text></div></div>
-      </div>
-      <p class="meta">
-        “Prepare” downloads the model: Chrome only allows it after a click. For the details of the model, open
-        <code>chrome://on-device-internals</code> and read the Broker State.
-      </p>
-      <div class="o-row">
-        <button class="luz-btn luz-btn--secondary" type="button" data-refresh>Check again</button>
-        <div class="luz-field">
-          <label class="luz-field__label" for="model-language">Model language</label>
-          <select class="luz-select" id="model-language">
-            <option value="en">English</option>
-            <option value="es">Spanish</option>
-            <option value="ja">Japanese</option>
-          </select>
-        </div>
-      </div>
-    </section>
-
-    <section class="o-stack">
-      <h2>Requirements</h2>
-      <div class="luz-table-wrap" role="region" aria-label="Requirements" tabindex="0">
-        <table class="luz-table">
-          <thead><tr><th scope="col">Aspect</th><th scope="col">Requirement</th></tr></thead>
-          <tbody>
-            <tr><td data-label="Aspect"><div>Browser</div></td><td data-label="Requirement"><div>Chrome on desktop (Windows, macOS, Linux). Not every API exists on mobile</div></td></tr>
-            <tr><td data-label="Aspect"><div>Model</div></td><td data-label="Requirement"><div>Gemini Nano, downloaded once and run locally</div></td></tr>
-            <tr><td data-label="Aspect"><div>Network</div></td><td data-label="Requirement"><div>Only for the first download of each model</div></td></tr>
-            <tr><td data-label="Aspect"><div>Languages</div></td><td data-label="Requirement"><div>The main model takes English, Spanish and Japanese (more in newer Chrome versions); the Translator covers many more pairs</div></td></tr>
-            <tr><td data-label="Aspect"><div>Hardware</div></td><td data-label="Requirement"><div>4 CPU cores and 16 GB of RAM, or a GPU with more than 4 GB of VRAM</div></td></tr>
-            <tr><td data-label="Aspect"><div>Storage</div></td><td data-label="Requirement"><div>About 22 GB free for the models</div></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="o-stack">
-      <h2>Demos</h2>
-      <ul class="o-grid o-grid--auto demo-grid">
-        {
-          demos.map((d) => (
-            <li class="luz-card">
-              <h3 class="luz-card__title"><a href={demoHref(d.slug)}>{d.title}</a></h3>
-              <p class="luz-card__body">{d.summary}</p>
-            </li>
-          ))
-        }
-      </ul>
-    </section>
-
-    <section class="o-stack">
-      <h2>Resources</h2>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chrome Local AI</title>
+    {LANGS.map((l) => <link rel="alternate" hreflang={l} href={new URL(targets[l]!, Astro.site)} />)}
+    <script is:inline define:vars={{ targets, key: LANG_KEY }}>
+      // The language chosen last time, else the browser's, else English.
+      var saved = null;
+      try {
+        saved = localStorage.getItem(key);
+      } catch (e) {}
+      var wanted = saved || (navigator.language || "en").slice(0, 2).toLowerCase();
+      location.replace(targets[wanted] || targets.en);
+    </script>
+  </head>
+  <body>
+    <main>
+      <h1>Chrome Local AI</h1>
       <ul>
-        {RESOURCES.map((r) => <li><a href={r.url}>{r.label}</a>: {r.note}</li>)}
+        {LANGS.map((l) => <li><a href={targets[l]} lang={l} hreflang={l}>{LANG_NAMES[l]}</a></li>)}
       </ul>
-    </section>
-  </DemoShell>
-</AppLayout>
-
-<script>
-  import "../scripts/status";
-</script>
+    </main>
+  </body>
+</html>

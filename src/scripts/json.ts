@@ -1,14 +1,16 @@
-import { $, onDemo, showJson } from "../lib/ui";
+import { $, UiError, onDemo, showJson } from "../lib/ui";
 import { JSON_PRESETS, samples } from "../data/samples";
+import { m } from "../i18n/client";
 
 onDemo("json", ({ root, engine, runner }) => {
   const description = $<HTMLTextAreaElement>(root, "#description");
   const preset = $<HTMLSelectElement>(root, "#preset");
   const schema = $<HTMLTextAreaElement>(root, "#schema");
 
-  preset.replaceChildren(...Object.entries(JSON_PRESETS).map(([key, p]) => new Option(p.label, key)), new Option("Custom", "custom"));
+  const keys = Object.keys(JSON_PRESETS) as (keyof typeof JSON_PRESETS)[];
+  preset.replaceChildren(...keys.map((key) => new Option(m().json.presets[key], key)), new Option(m().json.presets.custom, "custom"));
   const apply = () => {
-    const chosen = JSON_PRESETS[preset.value];
+    const chosen = JSON_PRESETS[preset.value as keyof typeof JSON_PRESETS];
     if (chosen) schema.value = JSON.stringify(chosen.schema, null, 2);
   };
   preset.addEventListener("change", apply);
@@ -23,7 +25,7 @@ onDemo("json", ({ root, engine, runner }) => {
       try {
         parsed = JSON.parse(schema.value) as Record<string, unknown>;
       } catch {
-        throw new Error("The schema is not valid JSON.");
+        throw new UiError(m().json.invalidSchema);
       }
       const res = await engine.run({ task: "json", input: description.value, options: { schema: parsed }, signal });
       showJson($(root, "#json-out"), res.data);

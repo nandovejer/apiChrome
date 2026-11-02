@@ -1,0 +1,118 @@
+---
+import AppLayout from "../../layouts/AppLayout.astro";
+import DemoShell from "../../components/DemoShell.astro";
+import { API_INFO, DEMOS, RESOURCES } from "../../data/demos";
+import { getStaticPaths, languageName, pageHref } from "../../i18n";
+import { i18n } from "../../i18n/server";
+import type { ApiName } from "@engine";
+
+export { getStaticPaths };
+const { lang, m, g } = i18n(Astro.url);
+const t = m.status;
+const apis = Object.keys(API_INFO) as ApiName[];
+const MATURITY_COLOR = { stable: "green", experimental: "yellow", deprecated: "red" } as const;
+const demos = DEMOS.filter((d) => d.slug);
+---
+
+<AppLayout slug="">
+  <DemoShell slug="" heading={m.site.name}>
+    <p>{g.home.intro}</p>
+
+    <section class="o-stack">
+      <h2>{g.home.startHeading}</h2>
+      <ol class="guide__steps">
+        {g.home.start.map((step) => <li>{step}</li>)}
+      </ol>
+    </section>
+
+    <section class="o-stack">
+      <h2>{t.yourBrowser}</h2>
+      <p class="meta">{g.home.apisIntro}</p>
+      <div class="luz-table-wrap" role="region" aria-label={t.tableAria} tabindex="0">
+        <table class="luz-table">
+          <thead>
+            <tr><th scope="col">{t.colApi}</th><th scope="col">{t.colState}</th><th scope="col">{t.colDevice}</th><th scope="col"><span class="u-sr-only">{t.colAction}</span></th></tr>
+          </thead>
+          <tbody>
+            {
+              apis.map((api) => (
+                <tr>
+                  <td data-label={t.colApi}>
+                    <div>
+                      <strong>{API_INFO[api].label}</strong> <code>{API_INFO[api].global}</code>
+                      <br />
+                      {g.apis[api].what}
+                      <br />
+                      <span class="meta">{g.apis[api].note}</span>
+                    </div>
+                  </td>
+                  <td data-label={t.colState}><div><span class={`luz-tag luz-tag--${MATURITY_COLOR[API_INFO[api].maturity]}`}>{m.maturity[API_INFO[api].maturity]}</span></div></td>
+                  <td data-label={t.colDevice}><div><span class="luz-tag luz-tag--gray" data-api-tag={api}>…</span></div></td>
+                  <td data-label={t.colAction}>
+                    <div>
+                      <button class="luz-btn luz-btn--outline" type="button" data-prepare={api}>{t.prepare}</button>
+                      <progress class="luz-progress" max="100" value="0" hidden data-row-progress={api} aria-label={t.rowDownloading(API_INFO[api].label)}></progress>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <div class="luz-alert luz-alert--error" data-error hidden role="alert">
+        <div class="luz-alert__icon" aria-hidden="true">×</div>
+        <div><div class="luz-alert__body" data-error-text></div></div>
+      </div>
+      <p class="meta">{t.prepareHelp}</p>
+      <div class="o-row">
+        <button class="luz-btn luz-btn--secondary" type="button" data-refresh>{t.checkAgain}</button>
+        <div class="luz-field">
+          <label class="luz-field__label" for="model-language">{t.modelLanguage}</label>
+          <select class="luz-select" id="model-language" aria-describedby="model-language-help">
+            {["en", "es", "ja"].map((code) => <option value={code}>{languageName(code, lang)}</option>)}
+          </select>
+          <div class="luz-field__helper" id="model-language-help">{t.modelLanguageHelp}</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="o-stack">
+      <h2>{t.requirements}</h2>
+      <div class="luz-table-wrap" role="region" aria-label={t.requirementsAria} tabindex="0">
+        <table class="luz-table">
+          <thead><tr><th scope="col">{t.colAspect}</th><th scope="col">{t.colRequirement}</th></tr></thead>
+          <tbody>
+            {t.rows.map(([aspect, requirement]) => <tr><td data-label={t.colAspect}><div>{aspect}</div></td><td data-label={t.colRequirement}><div>{requirement}</div></td></tr>)}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="o-stack">
+      <h2>{t.demos}</h2>
+      <p class="meta">{g.home.demosIntro}</p>
+      <ul class="o-grid o-grid--auto demo-grid">
+        {
+          demos.map((d) => (
+            <li class="luz-card">
+              <h3 class="luz-card__title"><a href={pageHref(lang, d.slug)}>{g.demos[d.slug]!.title}</a></h3>
+              <p class="luz-card__body">{g.demos[d.slug]!.summary}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="o-stack">
+      <h2>{t.resources}</h2>
+      <ul>
+        {RESOURCES.map((r) => <li><a href={r.url}>{r.label}</a>: {g.resources[r.id]!.note}</li>)}
+      </ul>
+    </section>
+  </DemoShell>
+</AppLayout>
+
+<script>
+  import "../../scripts/status";
+</script>

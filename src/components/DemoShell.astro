@@ -1,7 +1,8 @@
 ---
-import { API_INFO, demoBySlug } from "../data/demos";
-
 import type { HTMLAttributes } from "astro/types";
+import { API_INFO, demoBySlug } from "../data/demos";
+import { pageHref } from "../i18n";
+import { i18n } from "../i18n/server";
 
 interface Props extends Omit<HTMLAttributes<"section">, "slot"> {
   slug: string;
@@ -9,52 +10,74 @@ interface Props extends Omit<HTMLAttributes<"section">, "slot"> {
 }
 
 const { slug, heading, class: className, ...rest } = Astro.props;
+const { lang, m, g } = i18n(Astro.url);
 const demo = demoBySlug(slug);
-const MATURITY = {
-  stable: null,
-  experimental: ["yellow", "Experimental: it may not be available in your Chrome"],
-  deprecated: ["red", "Deprecated: when it is missing, the Prompt API does the work"],
-} as const;
-const notice = MATURITY[demo.maturity];
+const guide = g.demos[slug]!;
+const notice = demo.maturity === "experimental" ? m.maturity.experimentalNotice : demo.maturity === "deprecated" ? m.maturity.deprecatedNotice : null;
 ---
 
 <section class:list={["o-stack", className]} data-demo={slug} {...rest}>
   <header class="o-stack">
-    <h1>{heading ?? demo.title}</h1>
-    <p>{demo.summary}</p>
-    <div class="demo-head">
-      {
-        demo.uses.map((api) => (
-          <span class="api-pill">
-            {API_INFO[api].label}
-            <span class="luz-tag luz-tag--gray" data-api-tag={api}>…</span>
-          </span>
-        ))
-      }
-    </div>
+    <h1>{heading ?? guide.title}</h1>
+    <p>{guide.summary}</p>
+    {
+      slug && (
+        <div class="demo-head">
+          {
+            demo.uses.map((api) => (
+              <span class="api-pill">
+                {API_INFO[api].label}
+                <span class="luz-tag luz-tag--gray" data-api-tag={api}>…</span>
+              </span>
+            ))
+          }
+        </div>
+      )
+    }
     {
       notice && (
-        <div class={`luz-alert luz-alert--${notice[0] === "red" ? "warning" : "info"}`}>
+        <div class={`luz-alert luz-alert--${demo.maturity === "deprecated" ? "warning" : "info"}`}>
           <div class="luz-alert__icon" aria-hidden="true">!</div>
-          <div><div class="luz-alert__body">{notice[1]}.</div></div>
+          <div><div class="luz-alert__body">{notice}</div></div>
         </div>
       )
     }
     <div class="luz-alert luz-alert--error" data-unsupported hidden>
       <div class="luz-alert__icon" aria-hidden="true">×</div>
       <div>
-        <div class="luz-alert__title">This browser cannot run this demo</div>
+        <div class="luz-alert__title">{m.unsupported.title}</div>
         <div class="luz-alert__body">
-          Use Chrome on desktop, then check <code>chrome://on-device-internals</code> and the
-          <a href="https://developer.chrome.com/docs/ai/get-started">setup guide</a>. The
-          <a href={import.meta.env.BASE_URL}>Status page</a> says which APIs are missing.
+          {m.unsupported.body}
+          <a href="https://developer.chrome.com/docs/ai/get-started">{m.unsupported.setup}</a> ·
+          <a href={pageHref(lang)}>{m.unsupported.status}</a>
         </div>
       </div>
     </div>
     {
+      guide.how.length > 0 && (
+        <div class="luz-card guide">
+          <div class="guide__col o-stack">
+            <h2 class="guide__title">{m.guide.what}</h2>
+            <p>{guide.what}</p>
+            {guide.tip && (
+              <p class="meta">
+                <strong>{m.guide.tip}:</strong> {guide.tip}
+              </p>
+            )}
+          </div>
+          <div class="guide__col o-stack">
+            <h2 class="guide__title">{m.guide.how}</h2>
+            <ol class="guide__steps">
+              {guide.how.map((step) => <li>{step}</li>)}
+            </ol>
+          </div>
+        </div>
+      )
+    }
+    {
       demo.source && (
         <p class="meta">
-          Based on the <a href={demo.source.url}>{demo.source.label}</a>.
+          {m.guide.basedOn} <a href={demo.source.url}>{demo.source.label}</a>.
         </p>
       )
     }

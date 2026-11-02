@@ -1,5 +1,6 @@
-import { AIEngineError, messageFor, type ApiName, type ApiAvailability, type LocalAIEngine, type ResultMeta, type TaskStream } from "@engine";
+import { AIEngineError, type ApiName, type ApiAvailability, type LocalAIEngine, type ResultMeta, type TaskStream } from "@engine";
 import { DEMOS, demoBySlug } from "../data/demos";
+import { m } from "../i18n/client";
 import { getEngine } from "./engine";
 
 export function $<T extends HTMLElement = HTMLElement>(root: ParentNode, selector: string): T {
@@ -45,18 +46,17 @@ export function onDemo(slug: string, setup: (ctx: DemoContext) => void | (() => 
 
 /* Status tags and the "not supported" alert in the page header */
 
-const TAG: Record<ApiAvailability, [string, string]> = {
-  available: ["green", "Ready"],
-  downloadable: ["blue", "Needs download"],
-  downloading: ["yellow", "Downloading"],
-  unavailable: ["red", "Unavailable"],
-  unsupported: ["gray", "Not in this browser"],
+const TAG_COLOR: Record<ApiAvailability, string> = {
+  available: "green",
+  downloadable: "blue",
+  downloading: "yellow",
+  unavailable: "red",
+  unsupported: "gray",
 };
 
 export function setTag(el: HTMLElement, state: ApiAvailability): void {
-  const [color, label] = TAG[state];
-  el.className = `luz-tag luz-tag--${color} luz-tag--dot`;
-  el.textContent = label;
+  el.className = `luz-tag luz-tag--${TAG_COLOR[state]} luz-tag--dot`;
+  el.textContent = m().tag[state];
   el.dataset.state = state;
 }
 
@@ -92,6 +92,9 @@ export interface Runner {
   dispose(): void;
 }
 
+/** An error whose message is already written for the person using the page. */
+export class UiError extends Error {}
+
 export function showError(root: ParentNode, err: unknown): void {
   const box = root.querySelector<HTMLElement>("[data-error]");
   if (!box) return;
@@ -99,7 +102,8 @@ export function showError(root: ParentNode, err: unknown): void {
     box.hidden = true;
     return;
   }
-  const message = err instanceof AIEngineError ? err.message : messageFor("unknown");
+  const texts = m().errors;
+  const message = err instanceof UiError ? err.message : err instanceof AIEngineError ? texts[err.code] : texts.unknown;
   const body = box.querySelector<HTMLElement>("[data-error-text]");
   if (body) body.textContent = message;
   box.hidden = false;
@@ -117,7 +121,7 @@ export function createRunner(root: HTMLElement, engine: LocalAIEngine): Runner {
     if (!progress) return;
     progress.hidden = value >= 1;
     progress.value = Math.round(value * 100);
-    progress.setAttribute("aria-label", `Downloading the ${api} model, ${progress.value}%`);
+    progress.setAttribute("aria-label", m().common.downloadingApi(api, progress.value));
   });
 
   const busy = (on: boolean) => {
@@ -130,8 +134,7 @@ export function createRunner(root: HTMLElement, engine: LocalAIEngine): Runner {
     if (!metaLine) return;
     metaLine.hidden = !meta;
     if (!meta) return;
-    const via = meta.fallback ? `${meta.api} API (fallback)` : `${meta.api} API`;
-    metaLine.textContent = `${via} · ${meta.ms} ms`;
+    metaLine.textContent = m().common.via(meta.api, meta.fallback, meta.ms);
   };
 
   const stop = () => controller?.abort();
@@ -258,11 +261,12 @@ export function correctionRows(
 ): HTMLTableRowElement[] {
   return corrections.map((c) => {
     const tr = document.createElement("tr");
+    const k = m().common.corrections;
     const cells: [string, string][] = [
-      ["Original", c.original],
-      ["Correction", c.correction],
-      ["Type", c.types.join(", ") || "-"],
-      ["Why", c.explanation || "-"],
+      [k.original, c.original],
+      [k.correction, c.correction],
+      [k.type, c.types.join(", ") || "-"],
+      [k.why, c.explanation || "-"],
     ];
     for (const [label, value] of cells) {
       const td = tr.appendChild(document.createElement("td"));

@@ -1,0 +1,88 @@
+---
+import AppLayout from "../../layouts/AppLayout.astro";
+import DemoShell from "../../components/DemoShell.astro";
+import RunBar from "../../components/RunBar.astro";
+import LanguageSelect from "../../components/LanguageSelect.astro";
+import { getStaticPaths } from "../../i18n";
+import { i18n } from "../../i18n/server";
+
+export { getStaticPaths };
+const { lang, m } = i18n(Astro.url);
+const t = m.toolkit;
+const c = m.common;
+---
+
+<AppLayout slug="toolkit">
+  <DemoShell slug="toolkit">
+    <div class="o-stack">
+      <div class="luz-field">
+        <label class="luz-field__label" for="text">{t.yourText}</label>
+        <textarea class="luz-input luz-input--textarea" id="text" rows="8" placeholder={t.placeholder}></textarea>
+      </div>
+      <div class="o-row">
+        <button class="luz-btn luz-btn--ghost" type="button" data-sample>{t.useSample}</button>
+        <span class="meta" id="count" aria-live="polite"></span>
+      </div>
+
+      <nav class="luz-tabs" aria-label={t.tabsAria}>
+        <a class="luz-tab" href="#panel-summarize" data-action="summarize">{t.tabs.summarize}</a>
+        <a class="luz-tab" href="#panel-translate" data-action="translate">{t.tabs.translate}</a>
+        <a class="luz-tab" href="#panel-proofread" data-action="proofread">{t.tabs.proofread}</a>
+        <a class="luz-tab" href="#panel-simplify" data-action="simplify">{t.tabs.simplify}</a>
+        <a class="luz-tab" href="#panel-rewrite" data-action="rewrite">{t.tabs.rewrite}</a>
+      </nav>
+      <div class="luz-tabpanel" id="panel-summarize">
+        <div class="o-grid o-grid--2">
+          <div class="luz-field">
+            <label class="luz-field__label" for="sum-type">{c.summaryType}</label>
+            <select class="luz-select" id="sum-type" aria-describedby="sum-help">
+              <option value="key-points">{c.summaryTypes["key-points"]}</option>
+              <option value="tldr">{c.summaryTypes.tldr}</option>
+              <option value="teaser">{c.summaryTypes.teaser}</option>
+              <option value="headline">{c.summaryTypes.headline}</option>
+            </select>
+          </div>
+          <div class="luz-field">
+            <label class="luz-field__label" for="sum-length">{c.summaryLength}</label>
+            <select class="luz-select" id="sum-length">
+              <option value="short">{c.summaryLengths.short}</option>
+              <option value="medium" selected>{c.summaryLengths.medium}</option>
+              <option value="long">{c.summaryLengths.long}</option>
+            </select>
+          </div>
+        </div>
+        <p class="meta" id="sum-help">{c.summaryTypeHelp}</p>
+      </div>
+      <div class="luz-tabpanel" id="panel-translate">
+        <LanguageSelect id="tr-target" label={t.translateTo} value={lang === "es" ? "en" : "es"} />
+        <p class="meta">{t.translateHelp}</p>
+      </div>
+      <div class="luz-tabpanel" id="panel-proofread"><p class="meta">{t.proofreadHelp}</p></div>
+      <div class="luz-tabpanel" id="panel-simplify"><p class="meta">{t.simplifyHelp}</p></div>
+      <div class="luz-tabpanel" id="panel-rewrite">
+        <div class="luz-field">
+          <label class="luz-field__label" for="rw-tone">{c.tone}</label>
+          <select class="luz-select" id="rw-tone">
+            <option value="more-formal">{t.tones["more-formal"]}</option>
+            <option value="more-casual">{t.tones["more-casual"]}</option>
+          </select>
+        </div>
+      </div>
+
+      <RunBar label={t.run} />
+    </div>
+
+    <section class="o-stack">
+      <div class="o-row">
+        <h2>{t.results}</h2>
+        <button class="luz-btn luz-btn--ghost" type="button" data-clear>{t.clear}</button>
+      </div>
+      <div id="results" class="o-stack" aria-live="polite"></div>
+      <p class="meta" id="empty">{t.empty}</p>
+    </section>
+  </DemoShell>
+</AppLayout>
+
+<script>
+  import "../../scripts/toolkit";
+</script>

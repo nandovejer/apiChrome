@@ -125,9 +125,8 @@ export const WEATHER: WeatherSample[] = [
   { city: "Singapore", data: { city: "Singapore", temperatureC: 29, feelsLikeC: 35, condition: "thunderstorms", humidityPct: 91, windKmh: 12, uvIndex: 6, rainChancePct: 90 } },
 ];
 
-export const JSON_PRESETS: Record<string, { label: string; schema: object }> = {
+export const JSON_PRESETS: Record<"users" | "products" | "companies", { schema: object }> = {
   users: {
-    label: "Users",
     schema: {
       type: "object",
       properties: {
@@ -144,7 +143,6 @@ export const JSON_PRESETS: Record<string, { label: string; schema: object }> = {
     },
   },
   products: {
-    label: "Products",
     schema: {
       type: "object",
       properties: {
@@ -161,7 +159,6 @@ export const JSON_PRESETS: Record<string, { label: string; schema: object }> = {
     },
   },
   companies: {
-    label: "Companies",
     schema: {
       type: "object",
       properties: {

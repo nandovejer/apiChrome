@@ -1,0 +1,49 @@
+---
+import AppLayout from "../../layouts/AppLayout.astro";
+import DemoShell from "../../components/DemoShell.astro";
+import RunBar from "../../components/RunBar.astro";
+import Output from "../../components/Output.astro";
+import { getStaticPaths } from "../../i18n";
+import { i18n } from "../../i18n/server";
+
+export { getStaticPaths };
+const { m } = i18n(Astro.url);
+const t = m.proofread;
+const k = m.common.corrections;
+---
+
+<AppLayout slug="proofread">
+  <DemoShell slug="proofread">
+    <form class="o-stack" data-form>
+      <div class="luz-field">
+        <label class="luz-field__label" for="input">{t.text}</label>
+        <textarea class="luz-input luz-input--textarea" id="input" rows="6" required></textarea>
+      </div>
+      <label class="luz-toggle">
+        <input class="luz-toggle__input" type="checkbox" role="switch" id="explain" checked />
+        <span class="luz-toggle__track" aria-hidden="true"><span class="luz-toggle__thumb"></span></span>
+        <span class="luz-toggle__label">{t.explain}</span>
+      </label>
+      <RunBar label={t.run} submit />
+    </form>
+    <section class="o-stack" data-results hidden>
+      <h2 id="marked-label">{t.marked}</h2>
+      <div class="output" id="marked" role="region" aria-labelledby="marked-label"></div>
+      <p class="meta">{t.markedHelp}</p>
+    </section>
+    <Output id="out" label={t.corrected} placeholder={t.placeholder} />
+    <section class="o-stack" data-results hidden>
+      <h2>{k.heading}</h2>
+      <div class="luz-table-wrap" role="region" aria-label={k.heading} tabindex="0">
+        <table class="luz-table">
+          <thead><tr><th scope="col">{k.original}</th><th scope="col">{k.correction}</th><th scope="col">{k.type}</th><th scope="col">{k.why}</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </section>
+  </DemoShell>
+</AppLayout>
+
+<script>
+  import "../../scripts/proofread";
+</script>

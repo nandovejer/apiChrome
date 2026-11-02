@@ -2,7 +2,23 @@
 
 Demos de las **APIs de IA integradas de Chrome** (Gemini Nano): todo se ejecuta en tu dispositivo, sin servidor y, una vez descargado el modelo, sin conexión. Hecho con **[Astro](https://astro.build/)**, **TypeScript** y **[Luz DS](https://github.com/nandovejer/luz)**.
 
+## 🌍 Idiomas
+
+El sitio está en **inglés y español**: `/en/…` y `/es/…`. La raíz (`/`) manda al idioma que elegiste la última vez o, si no hay, al del navegador. El selector de la barra superior cambia de idioma en la misma página; también fija el idioma de los textos de ejemplo y del modelo.
+
+Cada demo empieza con una guía: **qué hace** y **cómo se usa**, paso a paso.
+
+| Qué | Dónde |
+|---|---|
+| Textos de la interfaz (los dos idiomas) | [src/i18n/en.ts](src/i18n/en.ts), [src/i18n/es.ts](src/i18n/es.ts): `es` usa el tipo de `en`, así que si falta una clave no compila |
+| Guías de cada demo, APIs y recursos | [src/i18n/guides.ts](src/i18n/guides.ts): solo las lee el servidor, no llegan al navegador |
+| Textos de ejemplo para el modelo | [src/data/samples.ts](src/data/samples.ts) |
+
+Para añadir un idioma: súmalo a `LANGS` en [src/i18n/index.ts](src/i18n/index.ts), crea su fichero de textos y su entrada en `guides.ts`. El test `tests/i18n.test.ts` comprueba que todos tienen las mismas claves y que cada demo está explicada.
+
 ## ✨ Demos
+
+Las rutas llevan el idioma delante (`/es/prompt/`).
 
 | Ruta | Qué hace | API |
 |---|---|---|

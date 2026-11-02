@@ -1,0 +1,38 @@
+---
+import AppLayout from "../../layouts/AppLayout.astro";
+import DemoShell from "../../components/DemoShell.astro";
+import RunBar from "../../components/RunBar.astro";
+import Output from "../../components/Output.astro";
+import { getStaticPaths } from "../../i18n";
+import { i18n } from "../../i18n/server";
+
+export { getStaticPaths };
+const { m } = i18n(Astro.url);
+const t = m.prompt;
+---
+
+<AppLayout slug="prompt">
+  <DemoShell slug="prompt">
+    <form class="o-stack" data-form>
+      <div class="luz-field">
+        <label class="luz-field__label" for="system">{t.system}</label>
+        <input class="luz-input" id="system" name="system" placeholder={t.systemPlaceholder} aria-describedby="system-help" />
+        <div class="luz-field__helper" id="system-help">{t.systemHelp}</div>
+      </div>
+      <div class="luz-field">
+        <label class="luz-field__label" for="input">{t.prompt}</label>
+        <textarea class="luz-input luz-input--textarea" id="input" name="input" rows="5" required placeholder={t.promptPlaceholder}></textarea>
+      </div>
+      <div class="luz-field">
+        <label class="luz-field__label" for="example">{t.examples}</label>
+        <select class="luz-select" id="example"><option value="">{m.common.pickOne}</option></select>
+      </div>
+      <RunBar label={t.send} submit />
+    </form>
+    <Output id="out" label={t.answer} placeholder={m.common.streamPlaceholder} />
+  </DemoShell>
+</AppLayout>
+
+<script>
+  import "../../scripts/prompt";
+</script>

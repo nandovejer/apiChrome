@@ -1,5 +1,6 @@
 import { $, fillSelect, onDemo, streamInto } from "../lib/ui";
 import { samples } from "../data/samples";
+import { m } from "../i18n/client";
 
 onDemo("prompt", ({ root, engine, runner }) => {
   const input = $<HTMLTextAreaElement>(root, "#input");
@@ -8,7 +9,7 @@ onDemo("prompt", ({ root, engine, runner }) => {
   const out = $(root, "#out");
   const prompts = samples.prompts(engine.language);
   fillSelect(example, ["", ...prompts]);
-  example.options[0]!.text = "Pick one…";
+  example.options[0]!.text = m().common.pickOne;
   example.addEventListener("change", () => example.value && (input.value = example.value));
 
   $(root, "[data-form]").addEventListener("submit", (event) => {

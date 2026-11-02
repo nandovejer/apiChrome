@@ -1,7 +1,7 @@
 import type { TaskStream, ResultMeta } from "@engine";
 import { $, $$, onDemo, streamInto } from "../lib/ui";
 import { samples } from "../data/samples";
-import { languageLabel } from "../data/languages";
+import { m, nameOf } from "../i18n/client";
 
 type Action = "summarize" | "translate" | "proofread" | "simplify" | "rewrite";
 
@@ -11,7 +11,7 @@ onDemo("toolkit", ({ root, engine, runner }) => {
   const results = $(root, "#results");
   const empty = $(root, "#empty");
 
-  const updateCount = () => (count.textContent = text.value ? `${text.value.length} characters` : "");
+  const updateCount = () => (count.textContent = text.value ? m().common.characters(text.value.length) : "");
   text.addEventListener("input", updateCount);
   $(root, "[data-sample]").addEventListener("click", () => {
     text.value = samples.article(engine.language);
@@ -42,8 +42,7 @@ onDemo("toolkit", ({ root, engine, runner }) => {
     return { body, meta };
   };
 
-  const describe = (meta: ResultMeta) =>
-    `${meta.fallback ? `${meta.api} API (fallback)` : `${meta.api} API`} · ${meta.ms} ms`;
+  const describe = (meta: ResultMeta) => m().common.via(meta.api, meta.fallback, meta.ms);
 
   $(root, "[data-run]").addEventListener("click", () => {
     const input = text.value.trim();
@@ -59,29 +58,30 @@ onDemo("toolkit", ({ root, engine, runner }) => {
         case "summarize": {
           const type = $<HTMLSelectElement>(root, "#sum-type").value as "tldr";
           const length = $<HTMLSelectElement>(root, "#sum-length").value as "short";
-          return streamed(`Summary: ${type}, ${length}`, engine.stream({ task: "summarize", input, options: { type, length }, signal }), true);
+          return streamed(m().toolkit.summaryTitle(m().common.summaryTypes[type], m().common.summaryLengths[length]), engine.stream({ task: "summarize", input, options: { type, length }, signal }), true);
         }
         case "translate": {
           const target = $<HTMLSelectElement>(root, "#tr-target").value;
-          const card = addCard(`Translation to ${languageLabel(target)}`);
+          const card = addCard(m().toolkit.translationTitle(nameOf(target)));
           const res = await engine.run({ task: "universal-translate", input, options: { target }, signal });
           const { detected, translation, skipped } = res.data;
           card.body.textContent = translation;
-          card.meta.textContent = `${detected ? `detected ${languageLabel(detected.language)}` : "language not detected"}${skipped ? ", nothing to translate" : ""} · ${describe(res.meta)}`;
+          const t = m().toolkit;
+          card.meta.textContent = `${detected ? t.detected(nameOf(detected.language)) : t.notDetected}${skipped ? t.nothingToTranslate : ""} · ${describe(res.meta)}`;
           return;
         }
         case "proofread": {
-          const card = addCard("Proofread");
+          const card = addCard(m().toolkit.proofreadTitle);
           const res = await engine.run({ task: "proofread", input, signal });
           card.body.textContent = res.data.corrected;
-          card.meta.textContent = `${res.data.corrections.length} corrections · ${describe(res.meta)}`;
+          card.meta.textContent = `${m().toolkit.correctionCount(res.data.corrections.length)} · ${describe(res.meta)}`;
           return;
         }
         case "simplify":
-          return streamed("Simplified", engine.stream({ task: "simplify", input, signal }));
+          return streamed(m().toolkit.simplifiedTitle, engine.stream({ task: "simplify", input, signal }));
         case "rewrite": {
           const tone = $<HTMLSelectElement>(root, "#rw-tone").value as "more-formal";
-          return streamed(`Rewritten: ${tone}`, engine.stream({ task: "rewrite", input, options: { tone }, signal }));
+          return streamed(m().toolkit.rewrittenTitle(m().toolkit.tones[tone]), engine.stream({ task: "rewrite", input, options: { tone }, signal }));
         }
       }
     });

@@ -1,0 +1,88 @@
+---
+import AppLayout from "../../layouts/AppLayout.astro";
+import DemoShell from "../../components/DemoShell.astro";
+import RunBar from "../../components/RunBar.astro";
+import Output from "../../components/Output.astro";
+import { getStaticPaths } from "../../i18n";
+import { i18n } from "../../i18n/server";
+
+export { getStaticPaths };
+const { m } = i18n(Astro.url);
+const t = m.write;
+const c = m.common;
+---
+
+<AppLayout slug="write">
+  <DemoShell slug="write">
+    <nav class="luz-tabs" aria-label={t.tabsAria}>
+      <a class="luz-tab" href="#panel-write">{t.write}</a>
+      <a class="luz-tab" href="#panel-rewrite">{t.rewrite}</a>
+    </nav>
+
+    <div class="luz-tabpanel" id="panel-write">
+      <form class="o-stack" data-form="write">
+        <div class="luz-field">
+          <label class="luz-field__label" for="w-input">{t.instruction}</label>
+          <textarea class="luz-input luz-input--textarea" id="w-input" rows="4" required></textarea>
+        </div>
+        <div class="luz-field">
+          <label class="luz-field__label" for="w-context">{t.context}</label>
+          <input class="luz-input" id="w-context" />
+        </div>
+        <div class="o-grid o-grid--2">
+          <div class="luz-field">
+            <label class="luz-field__label" for="w-tone">{c.tone}</label>
+            <select class="luz-select" id="w-tone">
+              <option value="formal">{t.writeTones.formal}</option>
+              <option value="neutral" selected>{t.writeTones.neutral}</option>
+              <option value="casual">{t.writeTones.casual}</option>
+            </select>
+          </div>
+          <div class="luz-field">
+            <label class="luz-field__label" for="w-length">{c.length}</label>
+            <select class="luz-select" id="w-length">
+              <option value="short">{c.summaryLengths.short}</option>
+              <option value="medium" selected>{c.summaryLengths.medium}</option>
+              <option value="long">{c.summaryLengths.long}</option>
+            </select>
+          </div>
+        </div>
+        <RunBar label={t.writeRun} submit />
+        <Output id="w-out" label={t.text} placeholder={t.textPlaceholder} />
+      </form>
+    </div>
+
+    <div class="luz-tabpanel" id="panel-rewrite">
+      <form class="o-stack" data-form="rewrite">
+        <div class="luz-field">
+          <label class="luz-field__label" for="r-input">{t.rewriteInput}</label>
+          <textarea class="luz-input luz-input--textarea" id="r-input" rows="5" required></textarea>
+        </div>
+        <div class="o-grid o-grid--2">
+          <div class="luz-field">
+            <label class="luz-field__label" for="r-tone">{c.tone}</label>
+            <select class="luz-select" id="r-tone">
+              <option value="as-is">{t.rewriteTones["as-is"]}</option>
+              <option value="more-formal" selected>{t.rewriteTones["more-formal"]}</option>
+              <option value="more-casual">{t.rewriteTones["more-casual"]}</option>
+            </select>
+          </div>
+          <div class="luz-field">
+            <label class="luz-field__label" for="r-length">{c.length}</label>
+            <select class="luz-select" id="r-length">
+              <option value="as-is" selected>{t.rewriteLengths["as-is"]}</option>
+              <option value="shorter">{t.rewriteLengths.shorter}</option>
+              <option value="longer">{t.rewriteLengths.longer}</option>
+            </select>
+          </div>
+        </div>
+        <RunBar label={t.rewriteRun} submit />
+        <Output id="r-out" label={t.rewritten} placeholder={t.textPlaceholder} />
+      </form>
+    </div>
+  </DemoShell>
+</AppLayout>
+
+<script>
+  import "../../scripts/write";
+</script>

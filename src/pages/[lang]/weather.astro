@@ -1,0 +1,37 @@
+---
+import AppLayout from "../../layouts/AppLayout.astro";
+import DemoShell from "../../components/DemoShell.astro";
+import RunBar from "../../components/RunBar.astro";
+import Output from "../../components/Output.astro";
+import { WEATHER } from "../../data/samples";
+import { getStaticPaths } from "../../i18n";
+import { i18n } from "../../i18n/server";
+
+export { getStaticPaths };
+const { m } = i18n(Astro.url);
+const t = m.weather;
+---
+
+<AppLayout slug="weather">
+  <DemoShell slug="weather">
+    <form class="o-stack" data-form>
+      <div class="luz-field">
+        <label class="luz-field__label" for="city">{t.city}</label>
+        <select class="luz-select" id="city">
+          {WEATHER.map((w) => <option value={w.city}>{w.city}</option>)}
+        </select>
+      </div>
+      <div class="luz-field">
+        <label class="luz-field__label" for="data">{t.data}</label>
+        <textarea class="luz-input luz-input--textarea" id="data" rows="9" spellcheck="false" aria-describedby="data-help"></textarea>
+        <div class="luz-field__helper" id="data-help">{t.dataHelp}</div>
+      </div>
+      <RunBar label={t.describe} submit />
+    </form>
+    <Output id="out" label={t.output} placeholder={t.placeholder} />
+  </DemoShell>
+</AppLayout>
+
+<script>
+  import "../../scripts/weather";
+</script>

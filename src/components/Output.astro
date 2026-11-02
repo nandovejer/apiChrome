@@ -1,5 +1,6 @@
 ---
 import type { HTMLAttributes } from "astro/types";
+import { i18n } from "../i18n/server";
 
 interface Props extends Omit<HTMLAttributes<"div">, "id"> {
   id: string;
@@ -10,13 +11,14 @@ interface Props extends Omit<HTMLAttributes<"div">, "id"> {
   meta?: boolean;
 }
 
-const { id, label = "Result", placeholder = "The result appears here.", copy = true, meta = true, class: className, ...rest } = Astro.props;
+const { m } = i18n(Astro.url);
+const { id, label = m.common.result, placeholder = m.common.resultPlaceholder, copy = true, meta = true, class: className, ...rest } = Astro.props;
 ---
 
 <div class:list={["o-stack", className]} {...rest}>
   <div class="o-row">
     <h2 id={`${id}-label`}>{label}</h2>
-    {copy && <button class="luz-copy-btn" type="button" data-copy-from={id} aria-label={`Copy: ${label}`}>Copy</button>}
+    {copy && <button class="luz-copy-btn" type="button" data-copy-from={id} aria-label={m.common.copyOf(label)}>{m.common.copy}</button>}
   </div>
   <div class="output" id={id} role="region" aria-labelledby={`${id}-label`} aria-live="polite" data-placeholder={placeholder}></div>
   {meta && <p class="meta" data-meta hidden></p>}

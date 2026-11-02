@@ -1,0 +1,52 @@
+---
+import AppLayout from "../../layouts/AppLayout.astro";
+import DemoShell from "../../components/DemoShell.astro";
+import RunBar from "../../components/RunBar.astro";
+import Output from "../../components/Output.astro";
+import { getStaticPaths } from "../../i18n";
+import { i18n } from "../../i18n/server";
+
+export { getStaticPaths };
+const { m } = i18n(Astro.url);
+const t = m.sos;
+const c = m.common;
+---
+
+<AppLayout slug="summary-of-summaries">
+  <DemoShell slug="summary-of-summaries">
+    <form class="o-stack" data-form>
+      <div class="luz-field">
+        <label class="luz-field__label" for="input">{t.text}</label>
+        <textarea class="luz-input luz-input--textarea" id="input" rows="10" required></textarea>
+        <div class="luz-field__helper" id="size-info" aria-live="polite"></div>
+      </div>
+      <div class="o-grid o-grid--2">
+        <div class="luz-field">
+          <label class="luz-field__label" for="chunk">{t.chunkBefore} <output class="luz-output" id="chunk-out" for="chunk">2000</output> {t.chunkAfter}</label>
+          <input class="luz-input" id="chunk" type="range" min="500" max="6000" step="250" value="2000" data-output="chunk-out" aria-describedby="chunk-help" />
+          <div class="luz-field__helper" id="chunk-help">{t.chunkHelp}</div>
+        </div>
+        <div class="luz-field">
+          <label class="luz-field__label" for="type">{t.finalSummary}</label>
+          <select class="luz-select" id="type">
+            <option value="tldr">{c.summaryTypes.tldr}</option>
+            <option value="key-points">{c.summaryTypes["key-points"]}</option>
+            <option value="teaser">{c.summaryTypes.teaser}</option>
+          </select>
+        </div>
+      </div>
+      <RunBar label={t.run} submit>
+        <progress class="luz-progress" id="steps" max="100" value="0" hidden aria-label={t.stepsAria}></progress>
+      </RunBar>
+    </form>
+    <Output id="out" label={t.output} placeholder={t.placeholder} />
+    <details class="luz-card" data-partials hidden>
+      <summary>{t.partials}</summary>
+      <ol id="partials"></ol>
+    </details>
+  </DemoShell>
+</AppLayout>
+
+<script>
+  import "../../scripts/summary-of-summaries";
+</script>

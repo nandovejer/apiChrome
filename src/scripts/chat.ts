@@ -1,4 +1,5 @@
 import { $, onDemo } from "../lib/ui";
+import { m } from "../i18n/client";
 import { samples } from "../data/samples";
 import type { Chat, ChatMessage } from "@engine";
 
@@ -36,7 +37,7 @@ onDemo("chat", ({ root, engine, runner }) => {
       /* storage blocked: the history lasts until the page closes */
     }
   };
-  const newSession = (messages: ChatMessage[] = [], title = `Chat ${sessions.length + 1}`): Session => {
+  const newSession = (messages: ChatMessage[] = [], title = m().chat.sessionTitle(sessions.length + 1)): Session => {
     const s: Session = { id: crypto.randomUUID(), title, messages };
     sessions.push(s);
     return s;
@@ -57,13 +58,13 @@ onDemo("chat", ({ root, engine, runner }) => {
     log.scrollTop = log.scrollHeight;
   };
   const renderSelect = () => {
-    select.replaceChildren(...sessions.map((s) => new Option(`${s.title} (${s.messages.length})`, s.id, false, s === current)));
+    select.replaceChildren(...sessions.map((s) => new Option(m().chat.sessionOption(s.title, s.messages.length), s.id, false, s === current)));
   };
   const renderUsage = () => {
     const u = current.chat?.usage;
     usage.max = u?.quota || 100;
     usage.value = u?.used ?? 0;
-    usage.textContent = u ? `${u.used} of ${u.quota}` : "0";
+    usage.textContent = u ? m().chat.usage(u.used, u.quota) : "0";
   };
   const show = () => {
     renderSelect();
@@ -85,7 +86,7 @@ onDemo("chat", ({ root, engine, runner }) => {
     save();
   });
   $(root, "[data-fork]").addEventListener("click", () => {
-    current = newSession([...current.messages], `${current.title} (fork)`);
+    current = newSession([...current.messages], m().chat.forkOf(current.title));
     show();
     save();
   });

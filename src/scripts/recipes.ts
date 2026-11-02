@@ -1,6 +1,7 @@
 import type { ExtractField } from "@engine";
 import { $, $$, bindRange, onDemo, showJson, streamInto } from "../lib/ui";
 import { samples } from "../data/samples";
+import { m } from "../i18n/client";
 
 type Recipe = "classify" | "extract" | "tags" | "moderate" | "describe" | "questions";
 
@@ -19,11 +20,13 @@ onDemo("recipes", ({ root, engine, runner }) => {
   const textOut = $(root, "#text-out");
   const verdict = $(root, "[data-verdict]");
   const jsonPanel = $(root, "[data-json-panel]");
+  const help = $(root, "#recipe-help");
   bindRange($<HTMLInputElement>(root, "#count"));
 
   const sync = () => {
     const current = recipe.value as Recipe;
     input.value = SAMPLE[current](engine.language);
+    help.textContent = m().recipes.help[current];
     for (const el of $$(root, "[data-for]")) el.hidden = !el.dataset.for?.split(" ").includes(current);
     textOut.parentElement!.hidden = current !== "describe";
     jsonPanel.hidden = true;
@@ -65,7 +68,8 @@ onDemo("recipes", ({ root, engine, runner }) => {
         }
         case "moderate": {
           const res = await engine.run({ task: "moderate", input: text, signal });
-          verdict.textContent = res.data.flagged ? `Flagged (${res.data.categories.join(", ") || "other"}): ${res.data.reason}` : `Looks fine: ${res.data.reason}`;
+          const t = m().recipes;
+          verdict.textContent = res.data.flagged ? t.flagged(res.data.categories.join(", ") || t.other, res.data.reason) : t.looksFine(res.data.reason);
           verdict.hidden = false;
           showJson($(root, "#json-out"), res.data);
           return runner.setMeta(res.meta);

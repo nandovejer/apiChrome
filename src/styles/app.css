@@ -114,3 +114,49 @@ mark.fix {
 .sidebar-group + .sidebar-group {
   margin-block-start: var(--luz-space-sm);
 }
+
+/* Language switcher in the app bar */
+.lang-switch {
+  display: flex;
+  gap: var(--luz-space-xs);
+  align-items: center;
+  font-size: var(--luz-text-sm);
+}
+
+.lang-switch a {
+  padding: var(--luz-space-2xs) var(--luz-space-xs);
+  border-radius: var(--luz-radius-sm);
+  text-decoration: none;
+}
+
+.lang-switch a[aria-current="true"] {
+  font-weight: 600;
+  background: var(--luz-surface-muted);
+  text-decoration: underline;
+}
+
+/* "What it does / how to use it" at the top of each demo */
+.guide {
+  display: grid;
+  gap: var(--luz-space-lg);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+}
+
+.guide__title {
+  margin: 0;
+  font-size: var(--luz-text-base);
+  font-weight: 600;
+}
+
+.guide__col > p {
+  margin: 0;
+}
+
+.guide__steps {
+  margin: 0;
+  padding-inline-start: var(--luz-space-lg);
+}
+
+.guide__steps li + li {
+  margin-block-start: var(--luz-space-xs);
+}

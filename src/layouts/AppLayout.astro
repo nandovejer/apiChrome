@@ -6,48 +6,53 @@ import "@luz-ds/catalog/components/sidebar.css";
 import "@luz-ds/catalog/components/app-bar.css";
 import "../styles/app.css";
 import themeBoot from "@luz-ds/core/theme-boot?raw";
-import { DEMOS, GROUPS, demoHref, type DemoGroup } from "../data/demos";
+import { DEMOS, GROUPS } from "../data/demos";
+import { LANGS, LANG_NAMES, pageHref, swapLang } from "../i18n";
+import { i18n } from "../i18n/server";
 
 interface Props {
-  title: string;
-  description?: string;
+  /** The demo this page is: its title and summary come from the guides. */
+  slug: string;
 }
 
-const { title, description = "Demos of Chrome's built-in AI APIs, running on your device." } = Astro.props;
+const { slug } = Astro.props;
+const { lang, m, g } = i18n(Astro.url);
+const title = g.demos[slug]!.title;
+const description = slug ? g.demos[slug]!.summary : m.site.description;
 // The file documents itself with a <script> tag in a comment, which would close this one early.
 const bootScript = themeBoot.replace(/\/\*[\s\S]*?\*\//g, "").replaceAll("</script", "<\\/script");
 const current = Astro.url.pathname;
-const groups = Object.keys(GROUPS) as DemoGroup[];
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <title>{title} · Chrome Local AI</title>
+    <title>{title} · {m.site.name}</title>
+    {LANGS.map((l) => <link rel="alternate" hreflang={l} href={new URL(swapLang(current, l), Astro.site)} />)}
     <script is:inline set:html={bootScript} />
     <ClientRouter />
   </head>
   <body>
-    <a class="luz-skip-link" href="#main-content">Skip to content</a>
+    <a class="luz-skip-link" href="#main-content">{m.nav.skip}</a>
     <div class="o-shell">
-      <nav class="luz-sidebar" id="app-nav" aria-label="Main" popover>
-        <a class="luz-sidebar__brand" href={demoHref("")}>
-          <span class="luz-sidebar__brand-name">Chrome Local AI</span>
+      <nav class="luz-sidebar" id="app-nav" aria-label={m.nav.main} popover>
+        <a class="luz-sidebar__brand" href={pageHref(lang)}>
+          <span class="luz-sidebar__brand-name">{m.site.name}</span>
         </a>
         {
-          groups.map((group) => (
+          GROUPS.map((group) => (
             <div class="luz-sidebar__section">
-              <span class="luz-sidebar__section-label">{GROUPS[group]}</span>
+              <span class="luz-sidebar__section-label">{m.groups[group]}</span>
               {DEMOS.filter((d) => d.group === group).map((d) => (
                 <a
                   class="luz-sidebar__link"
-                  href={demoHref(d.slug)}
-                  aria-current={current === demoHref(d.slug) ? "page" : undefined}
+                  href={pageHref(lang, d.slug)}
+                  aria-current={current === pageHref(lang, d.slug) ? "page" : undefined}
                 >
-                  {d.title}
+                  {g.demos[d.slug]!.title}
                 </a>
               ))}
             </div>
@@ -57,18 +62,34 @@ const groups = Object.keys(GROUPS) as DemoGroup[];
       <div class="o-main">
         <header class="luz-app-bar o-sticky">
           <div class="o-row">
-            <button class="luz-nav-toggle" type="button" popovertarget="app-nav" aria-label="Menu">
+            <button class="luz-nav-toggle" type="button" popovertarget="app-nav" aria-label={m.nav.menu}>
               <span class="luz-nav-toggle__bar"></span><span class="luz-nav-toggle__bar"></span><span class="luz-nav-toggle__bar"></span>
             </button>
-            <p class="luz-app-bar__product">Chrome Local AI</p>
+            <p class="luz-app-bar__product">{m.site.name}</p>
             <div class="o-row luz-app-bar__actions">
+              <nav class="lang-switch" aria-label={m.nav.language}>
+                {
+                  LANGS.map((l) => (
+                    <a
+                      href={swapLang(current, l)}
+                      lang={l}
+                      hreflang={l}
+                      data-lang-link={l}
+                      data-astro-reload
+                      aria-current={l === lang ? "true" : undefined}
+                    >
+                      {LANG_NAMES[l]}
+                    </a>
+                  ))
+                }
+              </nav>
               <luz-theme-mode inline transition:persist="mode">
                 <fieldset class="luz-theme-mode__group">
-                  <legend class="luz-theme-mode__legend">Color mode</legend>
-                  <label class="luz-theme-mode__option"><input class="luz-theme-mode__input" type="radio" name="luz-theme-mode" value="auto" checked />Auto</label>
-                  <label class="luz-theme-mode__option"><input class="luz-theme-mode__input" type="radio" name="luz-theme-mode" value="light" />Light</label>
-                  <label class="luz-theme-mode__option"><input class="luz-theme-mode__input" type="radio" name="luz-theme-mode" value="dark" />Dark</label>
-                  <label class="luz-theme-mode__option"><input class="luz-theme-mode__input" type="radio" name="luz-theme-mode" value="high-contrast" />High contrast</label>
+                  <legend class="luz-theme-mode__legend">{m.nav.colorMode}</legend>
+                  <label class="luz-theme-mode__option"><input class="luz-theme-mode__input" type="radio" name="luz-theme-mode" value="auto" checked />{m.nav.auto}</label>
+                  <label class="luz-theme-mode__option"><input class="luz-theme-mode__input" type="radio" name="luz-theme-mode" value="light" />{m.nav.light}</label>
+                  <label class="luz-theme-mode__option"><input class="luz-theme-mode__input" type="radio" name="luz-theme-mode" value="dark" />{m.nav.dark}</label>
+                  <label class="luz-theme-mode__option"><input class="luz-theme-mode__input" type="radio" name="luz-theme-mode" value="high-contrast" />{m.nav.highContrast}</label>
                 </fieldset>
               </luz-theme-mode>
             </div>
@@ -79,8 +100,8 @@ const groups = Object.keys(GROUPS) as DemoGroup[];
         </main>
         <footer class="o-container">
           <p class="meta">
-            Runs on Gemini Nano, in your browser: nothing you type leaves this device. Built with
-            <a href="https://github.com/nandovejer/luz">Luz DS</a>, Astro and TypeScript.
+            {m.footer.text}
+            {m.footer.builtWith} <a href="https://github.com/nandovejer/luz">Luz DS</a>, Astro {m.footer.and} TypeScript.
           </p>
         </footer>
       </div>

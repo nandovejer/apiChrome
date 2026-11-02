@@ -1,5 +1,5 @@
 import { $, onDemo, streamInto } from "../lib/ui";
-import { languageLabel } from "../data/languages";
+import { m, nameOf } from "../i18n/client";
 
 onDemo("translate", ({ root, engine, runner }) => {
   const input = $<HTMLTextAreaElement>(root, "#input");
@@ -21,7 +21,7 @@ onDemo("translate", ({ root, engine, runner }) => {
         const { data } = await engine.run({ task: "detect", input: text });
         if (!alive) return;
         const top = data[0];
-        detected.textContent = top ? `Detected: ${languageLabel(top.language)} (${Math.round(top.confidence * 100)}%)` : "";
+        detected.textContent = top ? m().translate.detected(nameOf(top.language), Math.round(top.confidence * 100)) : "";
       } catch {
         detected.textContent = "";
       }
@@ -41,9 +41,7 @@ onDemo("translate", ({ root, engine, runner }) => {
         const res = await engine.run({ task: "universal-translate", input: input.value, options: { target: target.value }, signal });
         const { detected: found, translation, skipped } = res.data;
         out.textContent = translation;
-        detected.textContent = found
-          ? `Detected: ${languageLabel(found.language)}${skipped ? ". It is already in the target language." : ""}`
-          : "The language could not be detected.";
+        detected.textContent = found ? m().translate.detectedOnly(nameOf(found.language), skipped) : m().translate.notDetected;
         return runner.setMeta(res.meta);
       }
       const stream = engine.stream({ task: "translate", input: input.value, options: { source: source.value, target: target.value }, signal });
