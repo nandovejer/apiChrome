@@ -2,12 +2,14 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Chrome Translator API Demo – PicoCSS</title>
-    <link rel="stylesheet" href="pico.min.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chrome Translator API Demo – Luz DS</title>
+    <link rel="stylesheet" href="vendor/luz/luz-tokens.min.css" />
+    <link rel="stylesheet" href="vendor/luz/luz.min.css" />
     <script type="module" src="index.js" defer></script>
   </head>
   <body>
-    <main class="container">
+    <main class="o-container o-stack">
       <h1>AI Translator in Chrome</h1>
       <p>
         Example using the <strong>Chrome Translator API</strong> (only available
@@ -16,20 +18,23 @@
       </p>
 
       <section>
-        <form id="translateForm">
-          <label for="textInput">Text to translate</label>
-          <textarea
-            id="textInput"
-            name="textInput"
-            rows="4"
-            placeholder="Write here..."
-            required
-          ></textarea>
+        <form id="translateForm" class="o-stack">
+          <div class="luz-field">
+            <label class="luz-field__label" for="textInput">Text to translate</label>
+            <textarea
+              class="luz-input luz-input--textarea"
+              id="textInput"
+              name="textInput"
+              rows="4"
+              placeholder="Write here..."
+              required
+            ></textarea>
+          </div>
 
-          <div class="grid">
-            <label for="sourceLang">
-              Source
-              <select id="sourceLang" name="sourceLang">
+          <div class="o-grid o-grid--2">
+            <div class="luz-field">
+              <label class="luz-field__label" for="sourceLang">Source</label>
+              <select class="luz-select" id="sourceLang" name="sourceLang">
                 <option value="en" selected>English</option>
                 <option value="es">Spanish</option>
                 <option value="fr">French</option>
@@ -84,11 +89,11 @@
                 <option value="uk">Ukrainian</option>
                 <option value="vi">Vietnamese</option>
               </select>
-            </label>
+            </div>
 
-            <label for="targetLang">
-              Target
-              <select id="targetLang" name="targetLang">
+            <div class="luz-field">
+              <label class="luz-field__label" for="targetLang">Target</label>
+              <select class="luz-select" id="targetLang" name="targetLang">
                 <option value="en">English</option>
                 <option value="es" selected>Spanish</option>
                 <option value="fr">French</option>
@@ -143,25 +148,21 @@
                 <option value="uk">Ukrainian</option>
                 <option value="vi">Vietnamese</option>
               </select>
-            </label>
+            </div>
           </div>
 
-          <button type="submit">Translate</button>
+          <div>
+            <button class="luz-btn luz-btn--primary" type="submit">Translate</button>
+          </div>
         </form>
       </section>
 
       <section>
         <h2>Translation</h2>
-        <article
-          id="translationOutput"
-          style="
-            min-height: 3em;
-            padding: 0.5em;
-            border: 1px solid var(--muted-border-color);
-            border-radius: var(--radius);
-          "
-        >
-          Waiting for text...
+        <article class="luz-card">
+          <p class="luz-card__body" id="translationOutput" aria-live="polite">
+            Waiting for text...
+          </p>
         </article>
       </section>
     </main>

@@ -1,0 +1,25 @@
+{
+  "name": "api-chrome-translator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI Translator in Chrome: Chrome Translator API demo, 100% on-device",
+  "type": "module",
+  "scripts": {
+    "postinstall": "node scripts/copy-luz.js",
+    "vendor": "node scripts/copy-luz.js",
+    "start": "npx --yes serve .",
+    "check": "luz-check index.html"
+  },
+  "dependencies": {
+    "@luz-ds/core": "0.3.0",
+    "@luz-ds/tokens": "0.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nandovejer/apiChrome.git"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@luz-ds/check": "0.3.0"
+  }
+}
