@@ -1,5 +1,15 @@
 /* App-specific rules, on LUZ tokens only. */
 
+/* A terminal look: one monospace sans for everything, headings and running text included. */
+:root {
+  --luz-font-mono: "JetBrains Mono", "IBM Plex Mono", "Cascadia Mono", ui-monospace, "SF Mono", Menlo, Consolas, "DejaVu Sans Mono", "Liberation Mono", monospace;
+  --luz-font-sans: var(--luz-font-mono);
+  --luz-font-heading: var(--luz-font-mono);
+  --luz-font-body: var(--luz-font-mono);
+  --luz-type-base: 0.9375rem;
+  --luz-text-body: var(--luz-text-base);
+}
+
 .output {
   min-height: 3rem;
   padding: var(--luz-space-md);
@@ -113,26 +123,6 @@ mark.fix {
 
 .sidebar-group + .sidebar-group {
   margin-block-start: var(--luz-space-sm);
-}
-
-/* Language switcher in the app bar */
-.lang-switch {
-  display: flex;
-  gap: var(--luz-space-xs);
-  align-items: center;
-  font-size: var(--luz-text-sm);
-}
-
-.lang-switch a {
-  padding: var(--luz-space-2xs) var(--luz-space-xs);
-  border-radius: var(--luz-radius-sm);
-  text-decoration: none;
-}
-
-.lang-switch a[aria-current="true"] {
-  font-weight: 600;
-  background: var(--luz-surface-muted);
-  text-decoration: underline;
 }
 
 /* "What it does / how to use it" at the top of each demo */

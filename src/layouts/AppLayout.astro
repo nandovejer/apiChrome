@@ -4,6 +4,7 @@ import "@luz-ds/tokens/css";
 import "@luz-ds/core/css";
 import "@luz-ds/catalog/components/sidebar.css";
 import "@luz-ds/catalog/components/app-bar.css";
+import "@luz-ds/catalog/components/lang-switch.css";
 import "../styles/app.css";
 import themeBoot from "@luz-ds/core/theme-boot?raw";
 import { DEMOS, GROUPS } from "../data/demos";
@@ -67,22 +68,37 @@ const current = Astro.url.pathname;
             </button>
             <p class="luz-app-bar__product">{m.site.name}</p>
             <div class="o-row luz-app-bar__actions">
-              <nav class="lang-switch" aria-label={m.nav.language}>
-                {
-                  LANGS.map((l) => (
-                    <a
-                      href={swapLang(current, l)}
-                      lang={l}
-                      hreflang={l}
-                      data-lang-link={l}
-                      data-astro-reload
-                      aria-current={l === lang ? "true" : undefined}
-                    >
-                      {LANG_NAMES[l]}
-                    </a>
-                  ))
-                }
-              </nav>
+              <luz-lang-switch>
+                <button class="luz-lang-switch__button" type="button" popovertarget="lang-menu">
+                  <svg class="luz-lang-switch__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z" />
+                  </svg>
+                  <span class="u-sr-only">{m.nav.language}: </span><span class="luz-lang-switch__name">{LANG_NAMES[lang]}</span>
+                </button>
+                <nav class="luz-lang-switch__menu" id="lang-menu" popover aria-labelledby="lang-title">
+                  <p class="luz-lang-switch__title" id="lang-title">{m.nav.language}</p>
+                  <ul class="luz-lang-switch__list">
+                    {
+                      LANGS.map((l) => (
+                        <li>
+                          <a
+                            class="luz-lang-switch__link"
+                            href={swapLang(current, l)}
+                            lang={l}
+                            hreflang={l}
+                            data-lang-link={l}
+                            data-astro-reload
+                            aria-current={l === lang ? "page" : undefined}
+                          >
+                            {LANG_NAMES[l]}
+                          </a>
+                        </li>
+                      ))
+                    }
+                  </ul>
+                </nav>
+              </luz-lang-switch>
               <luz-theme-mode inline transition:persist="mode">
                 <fieldset class="luz-theme-mode__group">
                   <legend class="luz-theme-mode__legend">{m.nav.colorMode}</legend>
