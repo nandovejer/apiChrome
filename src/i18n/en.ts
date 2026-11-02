@@ -49,6 +49,7 @@ export const en = {
     body: "Use Chrome on desktop and check chrome://on-device-internals.",
     setup: "Setup guide",
     status: "Status page",
+    faq: "Frequently asked questions",
   },
   guide: {
     what: "What it does",

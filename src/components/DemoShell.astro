@@ -49,7 +49,8 @@ const notice = demo.maturity === "experimental" ? m.maturity.experimentalNotice 
         <div class="luz-alert__body">
           {m.unsupported.body}
           <a href="https://developer.chrome.com/docs/ai/get-started">{m.unsupported.setup}</a> ·
-          <a href={pageHref(lang)}>{m.unsupported.status}</a>
+          <a href={pageHref(lang)}>{m.unsupported.status}</a> ·
+          <a href={`${pageHref(lang)}#faq`}>{m.unsupported.faq}</a>
         </div>
       </div>
     </div>

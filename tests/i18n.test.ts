@@ -17,6 +17,7 @@ describe("languages", () => {
     for (const lang of rest) {
       expect(shape(messages[lang]), lang).toEqual(shape(messages[first!]));
       expect(shape(guides[lang].home), lang).toEqual(shape(guides[first!].home));
+      expect(shape(guides[lang].faq), lang).toEqual(shape(guides[first!].faq));
     }
   });
 
@@ -32,6 +33,19 @@ describe("languages", () => {
         }
       }
       for (const { id } of RESOURCES) expect(guides[lang].resources[id]?.note, `${lang}/${id}`).toBeTruthy();
+    }
+  });
+});
+
+describe("faq", () => {
+  it("has unique ids and an answer for every question", () => {
+    for (const lang of LANGS) {
+      const items = guides[lang].faq.groups.flatMap((group) => group.items);
+      expect(new Set(items.map((item) => item.id)).size, lang).toBe(items.length);
+      for (const item of items) {
+        expect(item.q, `${lang}/${item.id}`).toBeTruthy();
+        expect(item.a.length, `${lang}/${item.id}`).toBeGreaterThan(0);
+      }
     }
   });
 });

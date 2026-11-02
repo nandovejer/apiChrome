@@ -1,6 +1,7 @@
 ---
 import AppLayout from "../../layouts/AppLayout.astro";
 import DemoShell from "../../components/DemoShell.astro";
+import "@luz-ds/catalog/components/faq.css";
 import { API_INFO, DEMOS, RESOURCES } from "../../data/demos";
 import { getStaticPaths, languageName, pageHref } from "../../i18n";
 import { i18n } from "../../i18n/server";
@@ -12,6 +13,9 @@ const t = m.status;
 const apis = Object.keys(API_INFO) as ApiName[];
 const MATURITY_COLOR = { stable: "green", experimental: "yellow", deprecated: "red" } as const;
 const demos = DEMOS.filter((d) => d.slug);
+const faq = g.faq;
+/** Text between backticks is code. */
+const parts = (text: string) => text.split("`").map((value, i) => ({ value, code: i % 2 === 1 }));
 ---
 
 <AppLayout slug="">
@@ -103,6 +107,33 @@ const demos = DEMOS.filter((d) => d.slug);
         }
       </ul>
     </section>
+
+    <luz-faq id="faq">
+      <h2 class="luz-faq__title">{faq.title}</h2>
+      <p class="luz-faq__lead">{faq.lead}</p>
+      <nav class="luz-faq__nav" aria-label={faq.title}>
+        <ul>
+          {faq.groups.map((group) => <li><a href={`#faq-group-${group.id}`}>{group.title}</a></li>)}
+        </ul>
+      </nav>
+      {
+        faq.groups.map((group) => (
+          <section class="luz-faq__group" aria-labelledby={`faq-group-${group.id}`}>
+            <h3 class="luz-faq__group-title" id={`faq-group-${group.id}`}>{group.title}</h3>
+            {group.items.map((item) => (
+              <details class="luz-faq__item">
+                <summary class="luz-faq__question">{item.q}</summary>
+                <div class="luz-faq__answer" id={`faq-${item.id}`}>
+                  {item.a.map((text) => <p>{parts(text).map((p) => (p.code ? <code>{p.value}</code> : p.value))}</p>)}
+                  {item.list && <ul>{item.list.map((text) => <li>{parts(text).map((p) => (p.code ? <code>{p.value}</code> : p.value))}</li>)}</ul>}
+                </div>
+              </details>
+            ))}
+          </section>
+        ))
+      }
+      <p class="luz-faq__more">{faq.more} <a href="https://developer.chrome.com/docs/ai/get-started">{faq.moreLink}</a></p>
+    </luz-faq>
 
     <section class="o-stack">
       <h2>{t.resources}</h2>

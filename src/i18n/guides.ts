@@ -15,8 +15,26 @@ export interface DemoGuide {
   tip?: string;
 }
 
+export interface FaqItem {
+  id: string;
+  q: string;
+  /** Paragraphs. Text between backticks is drawn as code. */
+  a: string[];
+  list?: string[];
+}
+
+export interface Faq {
+  title: string;
+  lead: string;
+  groups: { id: string; title: string; items: FaqItem[] }[];
+  /** "Not here?" line under the list. */
+  more: string;
+  moreLink: string;
+}
+
 export interface Guides {
   demos: Record<string, DemoGuide>;
+  faq: Faq;
   apis: Record<ApiName, { note: string; what: string }>;
   home: {
     intro: string;
@@ -199,6 +217,120 @@ const en: Guides = {
       ],
     },
   },
+  faq: {
+    title: "Frequently asked questions",
+    lead: "Setup, requirements and what to do when a model does not respond.",
+    groups: [
+      {
+        id: "start",
+        title: "Getting started",
+        items: [
+          {
+            id: "private",
+            q: "Does anything I write leave my device?",
+            a: ["No. The models run inside your browser, so the texts and images you use are not sent to any server. The only network use is the first download of each model."],
+          },
+          {
+            id: "browser",
+            q: "Which browser and system do I need?",
+            a: ["Chrome on desktop: Windows 10 or 11, macOS 13 or later, Linux, or ChromeOS on Chromebook Plus devices. Android and iOS are not supported by these APIs, and the Translator and the Language Detector are desktop only."],
+          },
+          {
+            id: "hardware",
+            q: "What hardware and disk space does it need?",
+            a: ["These are the requirements Chrome lists. If the free space falls below 10 GB after the download, Chrome removes the model and downloads it again once the requirements are met."],
+            list: [
+              "At least 22 GB free on the disk that holds your Chrome profile.",
+              "A GPU with more than 4 GB of VRAM, or a CPU with 16 GB of RAM and 4 or more cores.",
+              "An unmetered connection for the first download.",
+            ],
+          },
+          {
+            id: "download",
+            q: "How do I download a model?",
+            a: ["Open the Status page and press Prepare on the API you want, or just use a demo. Chrome only starts the download after a click or a key press on the page, so it cannot happen by itself. Models are large and can take several minutes."],
+          },
+          {
+            id: "offline",
+            q: "Does it work without internet?",
+            a: ["Yes, once the model is downloaded. Each language pair of the Translator downloads its own small model the first time you use it."],
+          },
+        ],
+      },
+      {
+        id: "problems",
+        title: "When something does not work",
+        items: [
+          {
+            id: "unavailable",
+            q: "A state says “Unavailable” or “Not in this browser”. What do I do?",
+            a: [
+              "“Not in this browser” means Chrome does not expose that API: use Chrome on desktop and keep it up to date. “Unavailable” means the API exists but the model cannot run on this device, usually because of the hardware or disk requirements.",
+              "These are the steps Chrome's guide recommends:",
+            ],
+            list: [
+              "Restart Chrome.",
+              "Open `chrome://on-device-internals` and, in the Broker State tab, check that there are no errors.",
+              "Open the DevTools console and run `LanguageModel.availability()`. It should return `available`.",
+              "If it still fails, wait a little and repeat the steps.",
+            ],
+          },
+          {
+            id: "stuck",
+            q: "The download does not start or does not finish.",
+            a: ["Press Prepare, or the main button of a demo, on the page itself: the download needs a click. Then check that you have enough free disk space and an unmetered connection, and open `chrome://on-device-internals` to see the model and its size."],
+          },
+          {
+            id: "echo",
+            q: "The answer repeats my prompt and ends with “End.Model:”.",
+            a: [
+              "That text is the request itself, sent back by the browser's model without writing any answer; it usually comes back in a few milliseconds. The prompt this site sends is correct, so the problem is in the model Chrome is running, probably a stand-in and not the real Gemini Nano. We have not been able to confirm the cause.",
+              "To check it:",
+            ],
+            list: [
+              "Try the Prompt playground with a short text such as “Say hi”. If it also echoes the prompt, the model is the cause.",
+              "Open `chrome://on-device-internals` and check the model status: it should show a real model with a version and a size.",
+              "Restart Chrome and press Prepare again on the Status page.",
+              "Try the same page in Chrome stable on desktop.",
+            ],
+          },
+          {
+            id: "image",
+            q: "The image analyzer returns an error or nonsense.",
+            a: ["Image input is experimental in the Prompt API and depends on the Chrome version and on the model installed on your device. If the Prompt playground works with text, the model may simply not read images yet."],
+          },
+          {
+            id: "fallback",
+            q: "Why does a result say “fallback”?",
+            a: ["The Proofreader is experimental, and the Writer and the Rewriter are deprecated. When Chrome does not have one of them, the site asks the Prompt API to do the job and marks the result as a fallback. The text is still valid, but it may differ from what the dedicated API would give."],
+          },
+        ],
+      },
+      {
+        id: "demos",
+        title: "About the demos",
+        items: [
+          {
+            id: "languages",
+            q: "Which languages does the model understand?",
+            a: ["The main model takes English, Spanish and Japanese; Chrome's guide adds German and French from Chrome 149. Choose the model language on the Status page: it also sets the language of the example texts. The Translator covers many more languages."],
+          },
+          {
+            id: "slow",
+            q: "Why is the first answer slow?",
+            a: ["The first request has to load the model into memory. The following ones start much sooner."],
+          },
+          {
+            id: "flags",
+            q: "Do I need to change Chrome flags?",
+            a: ["Chrome's getting-started guide lists no flags for these APIs, so try without them first. Experimental APIs, such as the Proofreader, can need extra steps: the setup guide has the current ones."],
+          },
+        ],
+      },
+    ],
+    more: "Not here?",
+    moreLink: "Read Chrome's setup guide",
+  },
   apis: {
     prompt: { note: "General-purpose generative AI", what: "Ask the model anything: answers, writing, classification, data in a JSON shape, even images." },
     summarizer: { note: "TL;DR, key points, teaser, headline", what: "Shortens a text in a style and length you choose." },
@@ -217,7 +349,7 @@ const en: Guides = {
       "In the table below, look at the state of each API. “Ready” means it can run now.",
       "If it says “Needs download”, press Prepare. Chrome downloads the model once; it can take a few minutes. Chrome only allows it after a click.",
       "Open any demo from the menu or the cards, type your own text or use the sample, and press the main button. The result appears as the model writes it.",
-      "If something fails, open chrome://on-device-internals to see the state of the model.",
+      "If something fails, read the frequently asked questions below, or open chrome://on-device-internals to see the state of the model.",
     ],
     demosIntro: "Each demo has a short guide at the top: what it does and how to use it.",
     apisIntro: "Seven APIs, each with its own job. Some demos use more than one.",
@@ -405,6 +537,120 @@ const es: Guides = {
       ],
     },
   },
+  faq: {
+    title: "Preguntas frecuentes",
+    lead: "Configuración, requisitos y qué hacer cuando un modelo no responde.",
+    groups: [
+      {
+        id: "start",
+        title: "Para empezar",
+        items: [
+          {
+            id: "private",
+            q: "¿Sale del dispositivo algo de lo que escribo?",
+            a: ["No. Los modelos se ejecutan dentro del navegador, así que los textos y las imágenes que usas no se envían a ningún servidor. El único uso de la red es la primera descarga de cada modelo."],
+          },
+          {
+            id: "browser",
+            q: "¿Qué navegador y qué sistema necesito?",
+            a: ["Chrome de escritorio: Windows 10 u 11, macOS 13 o posterior, Linux, o ChromeOS en dispositivos Chromebook Plus. Android e iOS no son compatibles con estas APIs, y el Traductor y el Detector de idioma solo existen en escritorio."],
+          },
+          {
+            id: "hardware",
+            q: "¿Qué hardware y cuánto disco hacen falta?",
+            a: ["Estos son los requisitos que indica Chrome. Si el espacio libre baja de 10 GB tras la descarga, Chrome elimina el modelo y lo vuelve a descargar cuando se cumplan de nuevo."],
+            list: [
+              "Al menos 22 GB libres en el disco que contiene tu perfil de Chrome.",
+              "Una GPU con más de 4 GB de VRAM, o una CPU con 16 GB de RAM y 4 núcleos o más.",
+              "Una conexión sin límite de datos para la primera descarga.",
+            ],
+          },
+          {
+            id: "download",
+            q: "¿Cómo descargo un modelo?",
+            a: ["Abre la página de estado y pulsa Preparar en la API que quieras, o usa directamente una demo. Chrome solo inicia la descarga tras un clic o una pulsación de tecla en la página, así que no puede ocurrir por sí sola. Los modelos son grandes y pueden tardar varios minutos."],
+          },
+          {
+            id: "offline",
+            q: "¿Funciona sin internet?",
+            a: ["Sí, una vez descargado el modelo. Cada par de idiomas del Traductor descarga su propio modelo pequeño la primera vez que lo usas."],
+          },
+        ],
+      },
+      {
+        id: "problems",
+        title: "Cuando algo no funciona",
+        items: [
+          {
+            id: "unavailable",
+            q: "Un estado dice «No disponible» o «No está en este navegador». ¿Qué hago?",
+            a: [
+              "«No está en este navegador» significa que Chrome no ofrece esa API: usa Chrome de escritorio y mantenlo actualizado. «No disponible» significa que la API existe, pero el modelo no puede ejecutarse en este dispositivo, normalmente por los requisitos de hardware o de disco.",
+              "Estos son los pasos que recomienda la guía de Chrome:",
+            ],
+            list: [
+              "Reinicia Chrome.",
+              "Abre `chrome://on-device-internals` y, en la pestaña Broker State, comprueba que no hay errores.",
+              "Abre la consola de DevTools y ejecuta `LanguageModel.availability()`. Debería devolver `available`.",
+              "Si sigue fallando, espera un poco y repite los pasos.",
+            ],
+          },
+          {
+            id: "stuck",
+            q: "La descarga no empieza o no termina.",
+            a: ["Pulsa Preparar, o el botón principal de una demo, en la propia página: la descarga necesita un clic. Después comprueba que tienes espacio libre suficiente y una conexión sin límite de datos, y abre `chrome://on-device-internals` para ver el modelo y su tamaño."],
+          },
+          {
+            id: "echo",
+            q: "La respuesta repite mi prompt y termina en «End.Model:».",
+            a: [
+              "Ese texto es la propia petición, devuelta por el modelo del navegador sin escribir ninguna respuesta; suele volver en pocos milisegundos. El prompt que envía este sitio es correcto, así que el problema está en el modelo que ejecuta Chrome, probablemente un sustituto y no el Gemini Nano real. No hemos podido confirmar la causa.",
+              "Para comprobarlo:",
+            ],
+            list: [
+              "Prueba el Prompt playground con un texto corto como «Di hola». Si también repite el prompt, el culpable es el modelo.",
+              "Abre `chrome://on-device-internals` y mira el estado del modelo: debería mostrar un modelo real, con versión y tamaño.",
+              "Reinicia Chrome y vuelve a pulsar Preparar en la página de estado.",
+              "Prueba la misma página en Chrome estable de escritorio.",
+            ],
+          },
+          {
+            id: "image",
+            q: "El analizador de imágenes da un error o una respuesta sin sentido.",
+            a: ["La entrada de imágenes es experimental en la Prompt API y depende de la versión de Chrome y del modelo instalado en tu dispositivo. Si el Prompt playground funciona con texto, puede que el modelo todavía no lea imágenes."],
+          },
+          {
+            id: "fallback",
+            q: "¿Por qué un resultado dice «alternativa»?",
+            a: ["El Corrector es experimental, y el Escritor y el Reescritor están obsoletos. Cuando Chrome no tiene alguno de ellos, el sitio le pide el trabajo a la Prompt API y marca el resultado como alternativa. El texto sigue siendo válido, pero puede diferir de lo que daría la API específica."],
+          },
+        ],
+      },
+      {
+        id: "demos",
+        title: "Sobre las demos",
+        items: [
+          {
+            id: "languages",
+            q: "¿Qué idiomas entiende el modelo?",
+            a: ["El modelo principal admite inglés, español y japonés; la guía de Chrome añade alemán y francés desde Chrome 149. Elige el idioma del modelo en la página de estado: también fija el idioma de los textos de ejemplo. El Traductor cubre muchos más idiomas."],
+          },
+          {
+            id: "slow",
+            q: "¿Por qué la primera respuesta tarda más?",
+            a: ["La primera petición tiene que cargar el modelo en memoria. Las siguientes empiezan mucho antes."],
+          },
+          {
+            id: "flags",
+            q: "¿Tengo que cambiar flags de Chrome?",
+            a: ["La guía de inicio de Chrome no indica ningún flag para estas APIs, así que prueba primero sin ellos. Las APIs experimentales, como el Corrector, pueden necesitar pasos extra: la guía de configuración recoge los vigentes."],
+          },
+        ],
+      },
+    ],
+    more: "¿No está aquí?",
+    moreLink: "Lee la guía de configuración de Chrome",
+  },
   apis: {
     prompt: { note: "IA generativa de uso general", what: "Pregúntale al modelo lo que quieras: respuestas, redacción, clasificación, datos con forma de JSON e incluso imágenes." },
     summarizer: { note: "TL;DR, puntos clave, gancho, titular", what: "Acorta un texto con el estilo y la longitud que elijas." },
@@ -423,7 +669,7 @@ const es: Guides = {
       "En la tabla de abajo mira el estado de cada API. «Listo» significa que ya puede funcionar.",
       "Si dice «Hay que descargarlo», pulsa Preparar. Chrome descarga el modelo una vez; puede tardar unos minutos. Chrome solo lo permite tras un clic.",
       "Abre cualquier demo desde el menú o las tarjetas, escribe tu texto o usa el de ejemplo y pulsa el botón principal. El resultado aparece mientras el modelo lo escribe.",
-      "Si algo falla, abre chrome://on-device-internals para ver el estado del modelo.",
+      "Si algo falla, lee las preguntas frecuentes de más abajo, o abre chrome://on-device-internals para ver el estado del modelo.",
     ],
     demosIntro: "Cada demo tiene una guía corta arriba: qué hace y cómo se usa.",
     apisIntro: "Siete APIs, cada una con su trabajo. Algunas demos usan más de una.",

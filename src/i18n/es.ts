@@ -47,6 +47,7 @@ export const es: Messages = {
     body: "Usa Chrome de escritorio y revisa chrome://on-device-internals.",
     setup: "Guía de configuración",
     status: "Página de estado",
+    faq: "Preguntas frecuentes",
   },
   guide: {
     what: "Qué hace",
