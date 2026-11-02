@@ -1,0 +1,16 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": [".astro/types.d.ts", "src/**/*", "tests/**/*"],
+  "exclude": ["dist", "node_modules"],
+  "compilerOptions": {
+    "target": "esnext",
+    "lib": ["esnext", "dom", "dom.iterable"],
+    "types": ["astro/client", "dom-chromium-ai"],
+    "noUncheckedIndexedAccess": true,
+    "paths": {
+      "@engine": ["./src/lib/ai-engine-local/index.ts"],
+      "@engine/*": ["./src/lib/ai-engine-local/*"],
+      "@/*": ["./src/*"]
+    }
+  }
+}

@@ -1,25 +1,36 @@
 {
   "name": "api-chrome-translator",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "AI Translator in Chrome: Chrome Translator API demo, 100% on-device",
+  "description": "Chrome Local AI: demos of Chrome's built-in AI APIs (Gemini Nano), 100% on-device, with Astro, TypeScript and Luz DS",
   "type": "module",
   "scripts": {
-    "postinstall": "node scripts/copy-luz.js",
-    "vendor": "node scripts/copy-luz.js",
-    "start": "npx --yes serve .",
-    "check": "luz-check index.html"
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "check": "luz-check src --ext .astro"
   },
   "dependencies": {
+    "@luz-ds/catalog": "0.3.0",
     "@luz-ds/core": "0.3.0",
-    "@luz-ds/tokens": "0.3.0"
+    "@luz-ds/tokens": "0.3.0",
+    "astro": "^6.4.8"
+  },
+  "devDependencies": {
+    "@luz-ds/check": "0.3.0",
+    "@types/dom-chromium-ai": "^0.0.18",
+    "typescript": "7.0.2",
+    "vitest": "^5.1.0"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/nandovejer/apiChrome.git"
   },
   "license": "MIT",
-  "devDependencies": {
-    "@luz-ds/check": "0.3.0"
+  "engines": {
+    "node": ">=22.12.0"
   }
 }
