@@ -102,6 +102,8 @@ export const en = {
     lead: "Checked right now with the data your browser exposes. Nothing is sent anywhere.",
     checking: "Checking your browser…",
     recheck: "Check again",
+    help: "What can I do?",
+    guide: "Chrome's setup guide",
     tableAria: "Compatibility checks",
     colCheck: "Check",
     colResult: "Result",

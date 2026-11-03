@@ -13,6 +13,10 @@ const t = m.compat;
     <div>
       <div class="luz-alert__title" data-compat-title>{t.checking}</div>
       <div class="luz-alert__body" data-compat-body></div>
+      <p class="luz-alert__body" data-compat-links hidden>
+        <a href="#faq-unavailable">{t.help}</a> ·
+        <a href="https://developer.chrome.com/docs/ai/get-started">{t.guide}</a>
+      </p>
     </div>
   </div>
   <div class="luz-table-wrap" role="region" aria-label={t.tableAria} tabindex="0" data-compat-table hidden>

@@ -100,6 +100,8 @@ export const es: Messages = {
     lead: "Se comprueba ahora mismo con los datos que expone tu navegador. No se envía nada a ninguna parte.",
     checking: "Comprobando tu navegador…",
     recheck: "Comprobar de nuevo",
+    help: "¿Qué puedo hacer?",
+    guide: "Guía de configuración de Chrome",
     tableAria: "Comprobaciones de compatibilidad",
     colCheck: "Comprobación",
     colResult: "Resultado",
