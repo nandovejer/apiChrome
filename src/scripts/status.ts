@@ -1,5 +1,6 @@
 import { $, $$, onDemo, setTag, showError } from "../lib/ui";
 import { storeLanguage } from "../lib/engine";
+import { renderCompat } from "../lib/compat-view";
 import type { ApiName } from "@engine";
 
 onDemo("", ({ root, engine }) => {
@@ -17,7 +18,11 @@ onDemo("", ({ root, engine }) => {
   const refresh = async () => {
     const status = await engine.status();
     for (const tag of $$(root, "[data-api-tag]")) setTag(tag, status[tag.dataset.apiTag as ApiName]);
+    void renderCompat(root, Promise.resolve(status));
   };
+
+  void renderCompat(root, engine.status());
+  $(root, "[data-compat-recheck]").addEventListener("click", () => void renderCompat(root, engine.status()));
 
   const off = engine.on("download", ({ api, progress }) => {
     const bar = root.querySelector<HTMLProgressElement>(`[data-row-progress="${api}"]`);

@@ -18,7 +18,7 @@ Cada demo empieza con una guía que explica qué hace y cómo se usa, paso a pas
 
 | Ruta | Descripción | API |
 |---|---|---|
-| `/` | Estado de las siete APIs en el navegador y descarga de modelos | Todas |
+| `/` | Comprobación de compatibilidad del navegador, estado de las siete APIs, descarga de modelos y preguntas frecuentes | Todas |
 | `/toolkit/` | Un texto, varias acciones (resumir, traducir, corregir, simplificar, reescribir), con los resultados guardados para compararlos | Summarizer, Translator, Prompt |
 | `/prompt/` | Playground con respuesta en streaming | Prompt |
 | `/chat/` | Chat con historial, botón de parar y varias sesiones que se pueden bifurcar | Prompt |

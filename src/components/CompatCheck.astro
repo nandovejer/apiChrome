@@ -1,0 +1,28 @@
+---
+import { i18n } from "../i18n/server";
+
+const { m } = i18n(Astro.url);
+const t = m.compat;
+---
+
+<section class="o-stack" data-compat>
+  <h2>{t.title}</h2>
+  <p class="meta">{t.lead}</p>
+  <div class="luz-alert luz-alert--info" data-compat-verdict role="status">
+    <div class="luz-alert__icon" aria-hidden="true" data-compat-icon>…</div>
+    <div>
+      <div class="luz-alert__title" data-compat-title>{t.checking}</div>
+      <div class="luz-alert__body" data-compat-body></div>
+    </div>
+  </div>
+  <div class="luz-table-wrap" role="region" aria-label={t.tableAria} tabindex="0" data-compat-table hidden>
+    <table class="luz-table">
+      <thead><tr><th scope="col">{t.colCheck}</th><th scope="col">{t.colResult}</th><th scope="col">{t.colDetail}</th></tr></thead>
+      <tbody data-compat-rows></tbody>
+    </table>
+  </div>
+  <p class="meta">{t.note}</p>
+  <div class="o-row">
+    <button class="luz-btn luz-btn--secondary" type="button" data-compat-recheck>{t.recheck}</button>
+  </div>
+</section>

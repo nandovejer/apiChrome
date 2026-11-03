@@ -1,6 +1,7 @@
 ---
 import AppLayout from "../../layouts/AppLayout.astro";
 import DemoShell from "../../components/DemoShell.astro";
+import CompatCheck from "../../components/CompatCheck.astro";
 import "@luz-ds/catalog/components/faq.css";
 import { API_INFO, DEMOS, RESOURCES } from "../../data/demos";
 import { getStaticPaths, languageName, pageHref } from "../../i18n";
@@ -21,6 +22,8 @@ const parts = (text: string) => text.split("`").map((value, i) => ({ value, code
 <AppLayout slug="">
   <DemoShell slug="" heading={m.site.name}>
     <p>{g.home.intro}</p>
+
+    <CompatCheck />
 
     <section class="o-stack">
       <h2>{g.home.startHeading}</h2>
